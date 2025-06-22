@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Layup – Build Custom Store Features Instantly</title>
+  <title>Layup – Build Anything Instantly</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -21,26 +21,20 @@
       font-family: 'Inter', sans-serif;
     }
     body {
-      background: linear-gradient(to bottom, #ffffff 0%, #eff6ff 100%);
+      background: linear-gradient(to bottom right, #ffffff 0%, #f0f4ff 100%);
       color: var(--foreground);
       line-height: 1.6;
     }
     header {
       text-align: center;
-      padding: 6rem 2rem 3rem;
+      padding: 8rem 2rem 4rem;
     }
-    header .label {
-      font-size: 0.85rem;
-      background: #eef2ff;
-      display: inline-block;
-      padding: 0.4rem 1rem;
-      border-radius: 999px;
-      color: var(--primary);
-      font-weight: 600;
-      margin-bottom: 1rem;
+    .logo {
+      width: 60px;
+      margin: 0 auto 1rem;
     }
     header h1 {
-      font-size: 3rem;
+      font-size: 3.25rem;
       font-weight: 700;
       background: linear-gradient(90deg, var(--primary), var(--accent));
       -webkit-background-clip: text;
@@ -51,12 +45,12 @@
       font-size: 1.25rem;
       color: var(--muted);
       max-width: 640px;
-      margin: 0 auto 2rem;
+      margin: 0 auto 2.5rem;
     }
     .hero-cta a {
       background-color: var(--foreground);
       color: var(--white);
-      padding: 0.9rem 1.75rem;
+      padding: 1rem 2rem;
       font-weight: 600;
       font-size: 1rem;
       border-radius: 9999px;
@@ -69,48 +63,52 @@
     .section {
       max-width: 1080px;
       margin: 0 auto;
-      padding: 4rem 1.5rem;
+      padding: 5rem 1.5rem;
     }
     .section h2 {
       font-size: 2rem;
       font-weight: 700;
-      margin-bottom: 2rem;
+      margin-bottom: 2.5rem;
       text-align: center;
     }
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 1.75rem;
+      gap: 2rem;
     }
     .card {
       background: var(--card);
-      padding: 1.75rem;
+      padding: 2rem;
       border-radius: 1rem;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
       font-size: 1rem;
       color: var(--foreground);
+      transition: transform 0.2s ease;
+    }
+    .card:hover {
+      transform: translateY(-4px);
     }
     .cta-block {
       background: var(--primary);
       color: var(--white);
-      padding: 4rem 2rem;
+      padding: 5rem 2rem;
       text-align: center;
       border-radius: 2rem;
-      margin-top: 5rem;
+      margin-top: 6rem;
     }
     .cta-block h3 {
-      font-size: 2rem;
+      font-size: 2.25rem;
       margin-bottom: 1rem;
     }
     .cta-block p {
-      font-size: 1.1rem;
-      margin-bottom: 1.5rem;
+      font-size: 1.2rem;
+      margin-bottom: 1.75rem;
     }
     .cta-block a {
       background: var(--white);
       color: var(--primary);
       font-weight: 600;
-      padding: 0.85rem 2rem;
+      padding: 1rem 2.25rem;
       border-radius: 9999px;
       text-decoration: none;
       font-size: 1rem;
@@ -121,7 +119,7 @@
     }
     .testimonial {
       text-align: center;
-      padding: 3rem 1.5rem;
+      padding: 4rem 1.5rem;
       font-style: italic;
       color: var(--muted);
       font-size: 1rem;
@@ -136,9 +134,9 @@
 </head>
 <body>
   <header>
-    <div class="label">AI-Powered Store Customization</div>
-    <h1>Build Anything for Your Store</h1>
-    <p>From popups to banners and sticky bars, Layup turns your ideas into live store features in seconds — just describe what you want, no coding needed.</p>
+    <img src="logo-placeholder.png" alt="Layup Logo" class="logo">
+    <h1>Say it. See it. Ship it.</h1>
+    <p>Layup turns your ideas into live store features — instantly. Just describe what you want, no code or developers needed.</p>
     <div class="hero-cta">
       <a href="#">Join the Waitlist</a>
     </div>

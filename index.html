@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Layup – Instant Store Customization</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+    body {
+      background: #f8f9fb;
+      color: #1a1a1a;
+      line-height: 1.6;
+    }
+    header {
+      background: white;
+      padding: 2rem;
+      text-align: center;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    header h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #4f46e5;
+    }
+    header p {
+      margin-top: 1rem;
+      font-size: 1.2rem;
+      color: #4b5563;
+    }
+    .section {
+      padding: 4rem 2rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .features, .solutions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+    .feature-box, .solution-box {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .cta {
+      background: #4f46e5;
+      color: white;
+      padding: 3rem 2rem;
+      text-align: center;
+      border-radius: 12px;
+      margin-top: 3rem;
+    }
+    .cta h2 {
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+    }
+    .cta a {
+      display: inline-block;
+      margin-top: 1rem;
+      background: white;
+      color: #4f46e5;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+    .cta a:hover {
+      background: #e0e7ff;
+    }
+    .testimonial {
+      margin-top: 4rem;
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+    }
+    .testimonial blockquote {
+      font-style: italic;
+      color: #374151;
+    }
+    footer {
+      text-align: center;
+      padding: 2rem;
+      font-size: 0.9rem;
+      color: #9ca3af;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Layup</h1>
+    <p>Just say it. We build it. Instantly.</p>
+  </header>
+
+  <section class="section">
+    <h2>What Can You Build?</h2>
+    <div class="features">
+      <div class="feature-box">Popups – Email collection, discounts, promos</div>
+      <div class="feature-box">Sticky Bars – Countdown timers, shipping offers</div>
+      <div class="feature-box">Banners – Sales, seasonal announcements</div>
+      <div class="feature-box">Product Sections – Smart layouts to boost conversion</div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Why Merchants Love Layup</h2>
+    <div class="solutions">
+      <div class="solution-box">No code? No problem. Just type or upload.</div>
+      <div class="solution-box">Need it fast? Go live in under 60 seconds.</div>
+      <div class="solution-box">On-brand always. Your styles stay intact.</div>
+      <div class="solution-box">Out of ideas? Layup suggests what’s missing.</div>
+    </div>
+  </section>
+
+  <section class="section cta">
+    <h2>Get Early Access</h2>
+    <p>Be one of the first 1,000 merchants to join our private beta. You’ll help shape the future of no-code eCommerce customization.</p>
+    <a href="#">Join the Waitlist</a>
+  </section>
+
+  <section class="section testimonial">
+    <blockquote>
+      “It took me 45 seconds to do what normally takes a developer 3 days.” – Jasmine, founder @ PlantWish
+    </blockquote>
+    <blockquote>
+      “I described it, and it just appeared. Like magic.” – Mike, co-owner @ GearNest
+    </blockquote>
+  </section>
+
+  <footer>
+    © 2025 Layup. Built by the Kudobuzz team.
+  </footer>
+</body>
+</html>

@@ -3,95 +3,124 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Layup – Instant Store Customization</title>
+  <title>Layup – Customize Your Store Instantly</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --primary: #4f46e5;
+      --foreground: #1f2937;
+      --background: #f9fafb;
+      --accent: #e0e7ff;
+      --muted: #6b7280;
+      --white: #ffffff;
+    }
     * {
+      box-sizing: border-box;
       margin: 0;
       padding: 0;
-      box-sizing: border-box;
       font-family: 'Inter', sans-serif;
     }
     body {
-      background: #f8f9fb;
-      color: #1a1a1a;
+      background: var(--background);
+      color: var(--foreground);
       line-height: 1.6;
     }
     header {
-      background: white;
-      padding: 2rem;
       text-align: center;
-      border-bottom: 1px solid #e5e7eb;
+      padding: 5rem 2rem 3rem;
+      background: linear-gradient(135deg, #6366f1, #818cf8);
+      color: var(--white);
     }
     header h1 {
-      font-size: 2.5rem;
+      font-size: 3rem;
       font-weight: 700;
-      color: #4f46e5;
-    }
-    header p {
-      margin-top: 1rem;
-      font-size: 1.2rem;
-      color: #4b5563;
-    }
-    .section {
-      padding: 4rem 2rem;
-      max-width: 900px;
-      margin: 0 auto;
-    }
-    .features, .solutions {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 2rem;
-      margin-top: 2rem;
-    }
-    .feature-box, .solution-box {
-      background: white;
-      padding: 2rem;
-      border-radius: 12px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-    }
-    .cta {
-      background: #4f46e5;
-      color: white;
-      padding: 3rem 2rem;
-      text-align: center;
-      border-radius: 12px;
-      margin-top: 3rem;
-    }
-    .cta h2 {
-      font-size: 1.8rem;
       margin-bottom: 1rem;
     }
-    .cta a {
-      display: inline-block;
-      margin-top: 1rem;
-      background: white;
-      color: #4f46e5;
-      padding: 0.75rem 1.5rem;
-      border-radius: 8px;
+    header p {
+      font-size: 1.25rem;
+      margin-bottom: 2rem;
+    }
+    .hero-cta a {
+      background-color: var(--white);
+      color: var(--primary);
+      padding: 0.9rem 1.75rem;
       font-weight: 600;
+      font-size: 1rem;
+      border-radius: 9999px;
       text-decoration: none;
+      transition: background 0.3s ease;
+    }
+    .hero-cta a:hover {
+      background-color: var(--accent);
+    }
+    .section {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 4rem 1.5rem;
+    }
+    .section h2 {
+      font-size: 2.25rem;
+      font-weight: 700;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.75rem;
+    }
+    .card {
+      background: var(--white);
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.04);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.06);
+    }
+    .cta-block {
+      background: var(--primary);
+      color: var(--white);
+      padding: 4rem 2rem;
+      text-align: center;
+      border-radius: 2rem;
+      margin-top: 5rem;
+    }
+    .cta-block h3 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+    .cta-block p {
+      font-size: 1.1rem;
+      margin-bottom: 1.5rem;
+    }
+    .cta-block a {
+      background: var(--white);
+      color: var(--primary);
+      font-weight: 600;
+      padding: 0.85rem 2rem;
+      border-radius: 9999px;
+      text-decoration: none;
+      font-size: 1rem;
       transition: background 0.2s;
     }
-    .cta a:hover {
-      background: #e0e7ff;
+    .cta-block a:hover {
+      background: var(--accent);
     }
     .testimonial {
-      margin-top: 4rem;
-      background: white;
-      padding: 2rem;
-      border-radius: 12px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.06);
-    }
-    .testimonial blockquote {
+      text-align: center;
+      padding: 3rem 1.5rem;
       font-style: italic;
-      color: #374151;
+      color: var(--muted);
+      font-size: 1rem;
     }
     footer {
       text-align: center;
       padding: 2rem;
-      font-size: 0.9rem;
-      color: #9ca3af;
+      font-size: 0.875rem;
+      color: var(--muted);
     }
   </style>
 </head>
@@ -99,41 +128,40 @@
   <header>
     <h1>Layup</h1>
     <p>Just say it. We build it. Instantly.</p>
+    <div class="hero-cta">
+      <a href="#">Join the Waitlist</a>
+    </div>
   </header>
 
   <section class="section">
     <h2>What Can You Build?</h2>
-    <div class="features">
-      <div class="feature-box">Popups – Email collection, discounts, promos</div>
-      <div class="feature-box">Sticky Bars – Countdown timers, shipping offers</div>
-      <div class="feature-box">Banners – Sales, seasonal announcements</div>
-      <div class="feature-box">Product Sections – Smart layouts to boost conversion</div>
+    <div class="grid">
+      <div class="card">Popups – Email collection, discounts, promos</div>
+      <div class="card">Sticky Bars – Countdown timers, shipping offers</div>
+      <div class="card">Banners – Sales, seasonal announcements</div>
+      <div class="card">Product Sections – Smart layouts to boost conversion</div>
     </div>
   </section>
 
   <section class="section">
     <h2>Why Merchants Love Layup</h2>
-    <div class="solutions">
-      <div class="solution-box">No code? No problem. Just type or upload.</div>
-      <div class="solution-box">Need it fast? Go live in under 60 seconds.</div>
-      <div class="solution-box">On-brand always. Your styles stay intact.</div>
-      <div class="solution-box">Out of ideas? Layup suggests what’s missing.</div>
+    <div class="grid">
+      <div class="card">No code? No problem. Just type or upload.</div>
+      <div class="card">Need it fast? Go live in under 60 seconds.</div>
+      <div class="card">On-brand always. Your styles stay intact.</div>
+      <div class="card">Out of ideas? Layup suggests what’s missing.</div>
     </div>
   </section>
 
-  <section class="section cta">
-    <h2>Get Early Access</h2>
-    <p>Be one of the first 1,000 merchants to join our private beta. You’ll help shape the future of no-code eCommerce customization.</p>
+  <section class="section cta-block">
+    <h3>Get Early Access</h3>
+    <p>Be one of the first 1,000 merchants to join our private beta. Help shape the future of no-code store design.</p>
     <a href="#">Join the Waitlist</a>
   </section>
 
   <section class="section testimonial">
-    <blockquote>
-      “It took me 45 seconds to do what normally takes a developer 3 days.” – Jasmine, founder @ PlantWish
-    </blockquote>
-    <blockquote>
-      “I described it, and it just appeared. Like magic.” – Mike, co-owner @ GearNest
-    </blockquote>
+    “It took me 45 seconds to do what normally takes a developer 3 days.” – Jasmine, founder @ PlantWish<br><br>
+    “I described it, and it just appeared. Like magic.” – Mike, co-owner @ GearNest
   </section>
 
   <footer>

@@ -71,14 +71,19 @@
       margin-bottom: 2.5rem;
       text-align: center;
     }
-    .grid {
+    .grid-3col {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
       gap: 2rem;
+    }
+    .card-column {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
     }
     .card {
       background: var(--card);
-      padding: 2rem;
+      padding: 1.5rem;
       border-radius: 1rem;
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
       font-size: 1rem;
@@ -143,35 +148,23 @@
   </header>
 
   <section class="section">
-    <h2>What Can You Build?</h2>
-    <div class="grid">
-      <div class="card">🛍️ Launch a weekend promo bar in seconds — just type it in.</div>
-      <div class="card">🎯 Add a product highlight block like your competitor’s — just upload a screenshot.</div>
-      <div class="card">📈 Capture more emails with a smart, branded popup — no forms needed.</div>
-      <div class="card">🔔 Popups – Email collection, discounts, promos</div>
-      <div class="card">📦 Sticky Bars – Countdown timers, shipping offers</div>
-      <div class="card">📣 Banners – Sales, seasonal announcements</div>
-      <div class="card">🛒 Product Sections – Smart layouts to boost conversion</div>
-      <div class="card">📢 Announcement Bars – Top-of-site messages, alerts</div>
-      <div class="card">📝 Lead Capture Forms – Newsletter opt-ins</div>
-    </div>
-  </section>
-
-  <section class="section">
     <h2>See It in Action</h2>
-    <div class="grid">
-      <div class="card">🗣️ <strong>Prompt:</strong> “Add a banner that says ‘Free Shipping This Weekend’ at the top.”<br><br>⚡ <strong>Layup instantly adds it</strong> to your live store with your branding, colors, and layout.</div>
-      <div class="card">🖼️ <strong>Upload:</strong> Screenshot of a product grid from another site.<br><br>🎨 <strong>Layup clones the layout</strong> and adjusts it to match your store's style — no coding.</div>
-      <div class="card">📩 <strong>Prompt:</strong> “Make a popup to offer 10% off for new visitors.”<br><br>🧠 <strong>Layup suggests best practices</strong>, auto-generates the design, and adds it in seconds.</div>
-    </div>
-
-    <div class="grid">
-      <div class="card">🧠 No code? No problem. Just type or upload your idea.</div>
-      <div class="card">⚡️ Need it fast? Go live in under 60 seconds.</div>
-      <div class="card">🎨 Stay on brand. Your styles stay intact.</div>
-      <div class="card">💡 Out of ideas? Layup suggests what’s missing.</div>
-      <div class="card">👁️ Instant preview and one-click install.</div>
-      <div class="card">🌐 Built for Shopify, Wix, BigCommerce, and Shoplazza.</div>
+    <div class="grid-3col">
+      <div class="card-column">
+        <div class="card">🗣️ <strong>Prompt:</strong> “Add a banner that says ‘Free Shipping This Weekend’.”</div>
+        <div class="card">⚡ <strong>Layup instantly adds it</strong> to your store with your branding.</div>
+        <div class="card">🚀 You’re live in seconds — no dev needed.</div>
+      </div>
+      <div class="card-column">
+        <div class="card">🖼️ <strong>Upload:</strong> Screenshot a layout from another store.</div>
+        <div class="card">🎨 <strong>Layup clones the layout</strong> and adapts it to your theme.</div>
+        <div class="card">✅ It matches your styles automatically.</div>
+      </div>
+      <div class="card-column">
+        <div class="card">📩 <strong>Prompt:</strong> “Add a popup with 10% off for new visitors.”</div>
+        <div class="card">🧠 <strong>Layup suggests best practices</strong> and auto-generates the design.</div>
+        <div class="card">⚡ Added instantly, with your store’s look and feel.</div>
+      </div>
     </div>
   </section>
 

@@ -9,8 +9,6 @@
     :root {
       --primary: #4f46e5;
       --foreground: #1f2937;
-      --background: #f9fafb;
-      --accent: #e0e7ff;
       --muted: #6b7280;
       --white: #ffffff;
     }
@@ -21,28 +19,32 @@
       font-family: 'Inter', sans-serif;
     }
     body {
-      background: var(--background);
+      background: linear-gradient(180deg, #fff 0%, #dbeafe 50%, #fef2f2 100%);
       color: var(--foreground);
       line-height: 1.6;
     }
     header {
       text-align: center;
-      padding: 5rem 2rem 3rem;
-      background: linear-gradient(135deg, #6366f1, #818cf8);
-      color: var(--white);
+      padding: 6rem 2rem 4rem;
     }
     header h1 {
-      font-size: 3rem;
+      font-size: 3.5rem;
       font-weight: 700;
-      margin-bottom: 1rem;
+      background: linear-gradient(90deg, #6366f1, #ec4899);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
     header p {
       font-size: 1.25rem;
-      margin-bottom: 2rem;
+      color: var(--muted);
+      margin-top: 1rem;
+    }
+    .hero-cta {
+      margin-top: 2.5rem;
     }
     .hero-cta a {
-      background-color: var(--white);
-      color: var(--primary);
+      background-color: var(--foreground);
+      color: var(--white);
       padding: 0.9rem 1.75rem;
       font-weight: 600;
       font-size: 1rem;
@@ -51,7 +53,7 @@
       transition: background 0.3s ease;
     }
     .hero-cta a:hover {
-      background-color: var(--accent);
+      background-color: #111827;
     }
     .section {
       max-width: 1000px;
@@ -73,12 +75,12 @@
       background: var(--white);
       padding: 2rem;
       border-radius: 1rem;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.04);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
       transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
     .card:hover {
       transform: translateY(-6px);
-      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.06);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
     }
     .cta-block {
       background: var(--primary);
@@ -107,7 +109,7 @@
       transition: background 0.2s;
     }
     .cta-block a:hover {
-      background: var(--accent);
+      background: #e0e7ff;
     }
     .testimonial {
       text-align: center;

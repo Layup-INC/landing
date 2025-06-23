@@ -19,6 +19,7 @@
   <meta name="twitter:title" content="Layup – AI-Powered Instant Store Features for Growth">
   <meta name="twitter:description" content="Layup helps eCommerce merchants turn ideas into live, revenue-boosting features instantly — using AI. No code, no developers, just describe it and ship it.">
   <meta name="twitter:image" content="/assets/social.png">
+
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     body {
@@ -29,7 +30,8 @@
       text-align: center;
     }
     header {
-      padding: 3rem 1rem;
+      padding: 3rem 1rem 2rem;
+      animation: fadeIn 1s ease-in-out;
     }
     .logo {
       width: 220px;
@@ -42,6 +44,7 @@
       font-size: 2.5rem;
       font-weight: 700;
       color: #4b0082;
+      margin: 1rem 0;
     }
     p {
       font-size: 1.125rem;
@@ -56,10 +59,11 @@
       font-weight: 600;
       border-radius: 9999px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-      transition: background 0.3s;
+      transition: background 0.3s, transform 0.2s;
     }
     .hero-cta a:hover {
       background: #374151;
+      transform: scale(1.05);
     }
     .section {
       padding: 4rem 1rem;
@@ -82,22 +86,29 @@
     }
     .card {
       background: white;
-      padding: 1.25rem 1rem;
+      padding: 1.5rem 1.25rem;
       border-radius: 0.75rem;
-      box-shadow: 0 8px 12px rgba(0, 0, 0, 0.05);
+      box-shadow: 0 10px 16px rgba(0, 0, 0, 0.08);
       font-size: 1rem;
-      transition: transform 0.3s;
+      transition: transform 0.3s, box-shadow 0.3s;
+      min-height: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
     }
     .card:hover {
-      transform: translateY(-4px);
+      transform: translateY(-6px);
+      box-shadow: 0 12px 20px rgba(0, 0, 0, 0.1);
     }
     .arrow {
       font-size: 1.5rem;
+      animation: bounce 2s infinite;
     }
     .cta-block {
       background: #1f2937;
       color: white;
-      padding: 3rem 1rem;
+      padding: 4rem 1rem;
     }
     .cta-block a {
       display: inline-block;
@@ -109,11 +120,23 @@
       border-radius: 9999px;
       text-decoration: none;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      transition: background 0.3s;
+    }
+    .cta-block a:hover {
+      background: #f3f4f6;
     }
     footer {
       font-size: 0.875rem;
       padding: 1rem;
       color: #6b7280;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(5px); }
     }
   </style>
 </head>

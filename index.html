@@ -538,7 +538,7 @@
     const payload = { email, storeUrl, platform, revenue };
 
     try {
-      const res = await fetch("https://landing-cyan-one.vercel.app/", {
+      const res = await fetch("https://landing-cyan-one.vercel.app/api/join-waitlist", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)

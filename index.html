@@ -526,9 +526,9 @@
 
         // Handle form submission
      function handleFormSubmission() {
-  const form = document.getElementById('waitlistForm');
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
+      const form = document.getElementById('waitlistForm');
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
 
     const email = form.querySelector('input[type="email"]').value.trim();
     const storeUrl = form.querySelector('input[type="url"]').value.trim();
@@ -536,9 +536,11 @@
     const revenue = document.querySelector('#revenueTrigger span').textContent.trim();
 
     const payload = { email, storeUrl, platform, revenue };
+console.log("Submitting form with payload:", payload);
 
     try {
       const res = await fetch("https://landing-cyan-one.vercel.app/api/join-waitlist", {
+        console.log("Submitting inside payload:", payload);
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)

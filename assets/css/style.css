@@ -95,7 +95,7 @@ body::before {
 */
    
 }
-@media (max-width: 768px) {
+
 .bouncing-object {
   position: fixed;
   top: 0;
@@ -107,7 +107,7 @@ body::before {
   transition: transform 2s ease-in-out;
   z-index: -1;
 }
-}
+
 .bouncing-object img{
     width: 100%; /* ukuran gambar */
   height: 100%;

@@ -598,6 +598,10 @@
             setupDropdown('revenueDropdown', 'revenueTrigger');
             handleFormSubmission();
             setupWaitlistButtons();
+            document.querySelector('.submit-btn').addEventListener('click', () => {
+  document.getElementById('waitlistForm').requestSubmit();
+});
+
         });
 
         // Close modal when clicking overlay

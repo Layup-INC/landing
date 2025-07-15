@@ -113,10 +113,6 @@ body::before {
   height: 100%;
 }
 
-.hero {
-  position: relative;
-  z-index: 1;
-}
 
 
 .grain{

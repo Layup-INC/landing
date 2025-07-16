@@ -1,14 +1,11 @@
 import { Client } from '@notionhq/client';
 
-const notion = new Client({ auth: process.env.NOTION_TOKEN });
-
 export default async function handler(req, res) {
   // Set CORS headers
   res.setHeader('Access-Control-Allow-Origin', 'https://laygen.ai');
   res.setHeader('Access-Control-Allow-Methods', 'POST');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-  // Handle OPTIONS request for CORS preflight
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
@@ -17,68 +14,70 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
+  // Validate environment variables
+  if (!process.env.NOTION_TOKEN || !process.env.NOTION_DATABASE_ID) {
+    console.error('Missing Notion environment variables');
+    return res.status(500).json({ error: 'Server configuration error' });
+  }
+
+  const notion = new Client({ auth: process.env.NOTION_TOKEN });
+
   try {
     const { email, storeUrl, platform, revenue } = req.body;
 
-    // Validate required fields
+    // Validate input
     if (!email || !storeUrl || !platform || !revenue) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
-    // Validate email format
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      return res.status(400).json({ error: 'Invalid email format' });
-    }
+    // Verify database connection
+    const database = await notion.databases.retrieve({
+      database_id: process.env.NOTION_DATABASE_ID
+    });
 
-    // Validate URL format
-    try {
-      new URL(storeUrl);
-    } catch (e) {
-      return res.status(400).json({ error: 'Invalid store URL' });
-    }
-
-    // Create page in Notion
-    await notion.pages.create({
+    // Create new page
+    const response = await notion.pages.create({
       parent: { database_id: process.env.NOTION_DATABASE_ID },
       properties: {
-        "Business Name": {
+        "Name": {
           title: [
             {
-              text: { content: `Store: ${storeUrl.replace(/^https?:\/\//, '')}` }
+              text: { content: `New Signup: ${email.substring(0, 20)}` }
             }
           ]
         },
         "Email": {
-          email: {
-            address: email
-          }
+          email: email
         },
         "Store URL": {
           url: storeUrl
         },
         "Platform": {
-          select: {
-            name: platform
-          }
+          select: { name: platform }
         },
-        "Revenue Range": {
-          select: {
-            name: revenue
-          }
+        "Revenue": {
+          select: { name: revenue }
         },
         "Date": {
-          date: {
-            start: new Date().toISOString()
-          }
+          date: { start: new Date().toISOString() }
         }
       }
     });
 
     return res.status(200).json({ success: true });
+
   } catch (error) {
-    console.error('Notion API Error:', error);
-    return res.status(500).json({ 
-      error: error.message || 'Failed to submit to Notion' 
+    console.error('Full Notion API error:', {
+      message: error.message,
+      code: error.code,
+      status: error.status,
+      request: error.request
+    });
+
+    return res.status(500).json({
+      error: 'Failed to process submission',
+      details: error.message,
+      code: error.code
     });
   }
 }

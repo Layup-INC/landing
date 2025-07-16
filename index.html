@@ -536,7 +536,7 @@
      <div class="modal-content">
       <div class="sticky-header">
        <h2>
-        Subscribe To Get Notified When We Launch
+       Get Notified When We Launch
        </h2>
        <p>
         Be among the first to build smarter and grow faster with LayGen. Join our waitlist and secure early access.
@@ -544,6 +544,16 @@
       </div>
       <form id="waitlistForm">
        <div class="form-group">
+<label class="form-label">
+    Store Name
+  </label>
+  <input 
+    class="form-input" 
+    placeholder="Your business or store name" 
+    required 
+    type="text" 
+    id="businessName"
+  />
         <label class="form-label">
          Store Url's
         </label>
@@ -768,14 +778,14 @@
      
      form.addEventListener('submit', async (e) => {
        e.preventDefault();
-       
+       const businessName = document.getElementById('businessName').value.trim();
        const email = document.getElementById('email').value.trim();
        const storeUrl = document.getElementById('storeUrl').value.trim();
        const platform = document.getElementById('platform').value;
        const revenue = document.getElementById('revenue').value;
 
        // Validate form
-       if (!email || !storeUrl || !platform || !revenue) {
+       if (!businessName || !email || !storeUrl || !platform || !revenue) {
          alert('Please fill in all fields');
          return;
        }
@@ -804,7 +814,7 @@
            headers: {
              'Content-Type': 'application/json',
            },
-           body: JSON.stringify({ email, storeUrl, platform, revenue })
+           body: JSON.stringify({businessName, email, storeUrl, platform, revenue })
          });
 
          if (res.ok) {

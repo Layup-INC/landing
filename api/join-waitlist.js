@@ -4,7 +4,7 @@ export default async function handler(req, res) {
   const notion = new Client({ auth: process.env.NOTION_TOKEN });
 
   try {
-    const { email, storeUrl, platform, revenue } = req.body;
+    const {businessName, email, storeUrl, platform, revenue } = req.body;
 
     // Match EXACT property names from your Notion database
     await notion.pages.create({
@@ -12,7 +12,7 @@ export default async function handler(req, res) {
       properties: {
         "Business Name": {  // Changed from "Name"
           title: [{
-            text: { content: `New Signup: ${email.substring(0, 20)}` }
+            text: { content: businessName }
           }]
         },
         "Email": { email: email },

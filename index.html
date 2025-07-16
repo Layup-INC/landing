@@ -32,7 +32,6 @@
   <div class="bouncing-object">
    <img alt="Obj 2" src="assets/icons/movingobject2.svg"/>
   </div>
-  <!-- <div class="bouncing-object"><img src="assets/icons/movingobject.svg" alt="Obj 3"></div> -->
   <div class="grain">
   </div>
   <!-- Header -->
@@ -295,8 +294,7 @@
          Describe or Upload
         </h3>
         <p class="step-description">
-         Type a prompt l
-                            ike
+         Type a prompt like
         </p>
         <ul class="step-features quotes">
          <li>
@@ -545,22 +543,17 @@
        </p>
       </div>
       <form id="waitlistForm">
-       <!--  <div class="form-group">
-                            <label class="form-label">Store Name</label>
-                            <input type="text" class="form-input" placeholder="Example: BellaSkincare or TheHypeStore" required>
-                        </div>
-                         -->
        <div class="form-group">
         <label class="form-label">
          Store Url's
         </label>
-        <input class="form-input" placeholder="Paste your live store link (e.g., https://myshop.com)" required="" type="url"/>
+        <input class="form-input" placeholder="Paste your live store link (e.g., https://myshop.com)" required type="url" id="storeUrl"/>
        </div>
        <div class="form-group">
         <label class="form-label">
          Email Address
         </label>
-        <input class="form-input" placeholder="We'll only use this to send your access invite" required="" type="email"/>
+        <input class="form-input" placeholder="We'll only use this to send your access invite" required type="email" id="email"/>
        </div>
        <div class="form-group">
         <label class="form-label">
@@ -595,6 +588,7 @@
            Other
           </div>
          </div>
+         <input type="hidden" id="platform" name="platform"/>
         </div>
        </div>
        <div class="form-group">
@@ -627,12 +621,13 @@
            $50,000+
           </div>
          </div>
+         <input type="hidden" id="revenue" name="revenue"/>
         </div>
        </div>
+       <button class="submit-btn" type="submit" id="submitBtn">
+        Join the Waitlist &mdash; It's Free
+       </button>
       </form>
-      <button class="submit-btn" type="submit">
-       Join the Waitlist &mdash; It's Free
-      </button>
      </div>
     </div>
     <!-- Step 2: Thank You -->
@@ -685,323 +680,335 @@
   </div>
   <script>
    // Open waitlist modal
-        function openWaitlistModal() {
-            document.getElementById('waitlistModal').classList.add('active');
-            document.body.style.overflow = 'hidden';
-            showStep('waitlistStep');
-        }
+   function openWaitlistModal() {
+     document.getElementById('waitlistModal').classList.add('active');
+     document.body.style.overflow = 'hidden';
+     showStep('waitlistStep');
+   }
 
-        // Close waitlist modal
-        function closeWaitlistModal() {
-            document.getElementById('waitlistModal').classList.remove('active');
-            document.body.style.overflow = 'auto';
-            // Reset to first step when closing
-            setTimeout(() => {
-                showStep('waitlistStep');
-            }, 300);
-        }
+   // Close waitlist modal
+   function closeWaitlistModal() {
+     document.getElementById('waitlistModal').classList.remove('active');
+     document.body.style.overflow = 'auto';
+     setTimeout(() => {
+       showStep('waitlistStep');
+     }, 300);
+   }
 
-        // Show specific step with smooth transition
-        function showStep(stepId) {
-            const allSteps = document.querySelectorAll('.modal-step');
-            const targetStep = document.getElementById(stepId);
-            
-            // Hide all steps
-            allSteps.forEach(step => {
-                step.classList.remove('active');
-            });
-            
-            // Show target step
-            targetStep.classList.add('active');
-        }
+   // Show specific step with smooth transition
+   function showStep(stepId) {
+     const allSteps = document.querySelectorAll('.modal-step');
+     const targetStep = document.getElementById(stepId);
+     
+     allSteps.forEach(step => {
+       step.classList.remove('active');
+     });
+     
+     targetStep.classList.add('active');
+   }
 
-        // Transition to thank you step
-        function showThankYouStep() {
-            const waitlistContent = document.querySelector('#waitlistStep .modal-content');
-            const thankYouStep = document.getElementById('thankYouStep');
-            
-            // Fade out current content
-            waitlistContent.classList.add('fade-out');
-            
-            setTimeout(() => {
-                // Switch to thank you step
-                showStep('thankYouStep');
-                
-                // Fade in thank you content
-                const thankYouContent = document.querySelector('#thankYouStep .modal-content');
-                thankYouContent.classList.add('fade-in');
-                
-                // Reset fade classes
-                setTimeout(() => {
-                    waitlistContent.classList.remove('fade-out');
-                    thankYouContent.classList.remove('fade-in');
-                }, 50);
-            }, 250);
-        }
+   // Transition to thank you step
+   function showThankYouStep() {
+     const waitlistContent = document.querySelector('#waitlistStep .modal-content');
+     const thankYouStep = document.getElementById('thankYouStep');
+     
+     waitlistContent.classList.add('fade-out');
+     
+     setTimeout(() => {
+       showStep('thankYouStep');
+       
+       const thankYouContent = document.querySelector('#thankYouStep .modal-content');
+       thankYouContent.classList.add('fade-in');
+       
+       setTimeout(() => {
+         waitlistContent.classList.remove('fade-out');
+         thankYouContent.classList.remove('fade-in');
+       }, 50);
+     }, 250);
+   }
 
-        // Handle dropdown functionality
-        function setupDropdown(dropdownId, triggerId) {
-            const dropdown = document.getElementById(dropdownId);
-            const trigger = document.getElementById(triggerId);
-            const options = dropdown.querySelectorAll('.dropdown-option');
+   // Handle dropdown functionality
+   function setupDropdown(dropdownId, triggerId, hiddenInputId) {
+     const dropdown = document.getElementById(dropdownId);
+     const trigger = document.getElementById(triggerId);
+     const hiddenInput = document.getElementById(hiddenInputId);
+     const options = dropdown.querySelectorAll('.dropdown-option');
 
-            trigger.addEventListener('click', () => {
-                dropdown.classList.toggle('active');
-            });
+     trigger.addEventListener('click', () => {
+       dropdown.classList.toggle('active');
+     });
 
-            options.forEach(option => {
-                option.addEventListener('click', () => {
-                    const value = option.dataset.value;
-                    const text = option.textContent;
-                    
-                    trigger.querySelector('span').textContent = text;
-                    trigger.classList.remove('placeholder');
-                    
-                    // Remove selected class from all options
-                    options.forEach(opt => opt.classList.remove('selected'));
-                    // Add selected class to clicked option
-                    option.classList.add('selected');
-                    
-                    dropdown.classList.remove('active');
-                });
-            });
+     options.forEach(option => {
+       option.addEventListener('click', () => {
+         const value = option.dataset.value;
+         const text = option.textContent;
+         
+         trigger.querySelector('span').textContent = text;
+         trigger.classList.remove('placeholder');
+         hiddenInput.value = value;
+         
+         options.forEach(opt => opt.classList.remove('selected'));
+         option.classList.add('selected');
+         
+         dropdown.classList.remove('active');
+       });
+     });
 
-            // Close dropdown when clicking outside
-            document.addEventListener('click', (e) => {
-                if (!dropdown.contains(e.target)) {
-                    dropdown.classList.remove('active');
-                }
-            });
-        }
+     document.addEventListener('click', (e) => {
+       if (!dropdown.contains(e.target)) {
+         dropdown.classList.remove('active');
+       }
+     });
+   }
 
-        // Handle form submission
-     function handleFormSubmission() {
-  const form = document.getElementById('waitlistForm');
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
+   // Handle form submission
+   function handleFormSubmission() {
+     const form = document.getElementById('waitlistForm');
+     const submitBtn = document.getElementById('submitBtn');
+     
+     form.addEventListener('submit', async (e) => {
+       e.preventDefault();
+       
+       const email = document.getElementById('email').value.trim();
+       const storeUrl = document.getElementById('storeUrl').value.trim();
+       const platform = document.getElementById('platform').value;
+       const revenue = document.getElementById('revenue').value;
 
-    const email = form.querySelector('input[type="email"]').value.trim();
-    const storeUrl = form.querySelector('input[type="url"]').value.trim();
-    const platform = document.querySelector('#platformTrigger span').textContent.trim();
-    const revenue = document.querySelector('#revenueTrigger span').textContent.trim();
+       // Validate form
+       if (!email || !storeUrl || !platform || !revenue) {
+         alert('Please fill in all fields');
+         return;
+       }
 
-    const payload = { email, storeUrl, platform, revenue };
+       // Validate email format
+       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+         alert('Please enter a valid email address');
+         return;
+       }
 
-    try {
-      const res = await fetch("https://landing-cyan-one.vercel.app/", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      });
+       // Validate URL format
+       try {
+         new URL(storeUrl);
+       } catch (e) {
+         alert('Please enter a valid store URL (include https://)');
+         return;
+       }
 
-      if (res.ok) {
-        showThankYouStep();
-      } else {
-        const data = await res.json();
-        alert("❌ Failed to submit: " + data.error);
-      }
-    } catch (err) {
-      alert("❌ Network error. Please try again.");
-      console.error("Error submitting form:", err);
-    }
-  });
-}
+       // Disable button during submission
+       submitBtn.disabled = true;
+       submitBtn.textContent = 'Submitting...';
 
+       try {
+         const res = await fetch('/api/join-waitlist', {
+           method: 'POST',
+           headers: {
+             'Content-Type': 'application/json',
+           },
+           body: JSON.stringify({ email, storeUrl, platform, revenue })
+         });
 
-        // Add click handlers to all waitlist buttons
-        function setupWaitlistButtons() {
-            // Header button
-            const headerBtn = document.querySelector('.nav-button');
-            headerBtn.addEventListener('click', openWaitlistModal);
-            
-            // Footer banner button
-            const searchBtn = document.querySelector('.search-button');
-            searchBtn.addEventListener('click', openWaitlistModal);
+         if (res.ok) {
+           showThankYouStep();
+         } else {
+           const error = await res.json();
+           alert(`Submission failed: ${error.error || 'Unknown error'}`);
+         }
+       } catch (err) {
+         console.error('Submission error:', err);
+         alert('Network error. Please try again.');
+       } finally {
+         submitBtn.disabled = false;
+         submitBtn.textContent = 'Join the Waitlist — It\'s Free';
+       }
+     });
+   }
 
-            // Footer banner button
-            const footerBtn = document.querySelector('.footer-cta-button');
-            footerBtn.addEventListener('click', openWaitlistModal);
+   // Add click handlers to all waitlist buttons
+   function setupWaitlistButtons() {
+     // Header button
+     const headerBtn = document.querySelector('.nav-button');
+     headerBtn.addEventListener('click', openWaitlistModal);
+     
+     // Footer banner button
+     const searchBtn = document.querySelector('.search-button');
+     searchBtn.addEventListener('click', openWaitlistModal);
 
-           // ✅ Tambahkan ke textarea saat klik suggestion
-            const suggestionTags = document.querySelectorAll('.suggestion-tag');
-            const textarea = document.querySelector('.search-input');
+     // Footer banner button
+     const footerBtn = document.querySelector('.footer-cta-button');
+     footerBtn.addEventListener('click', openWaitlistModal);
 
-            suggestionTags.forEach(tag => {
-                tag.addEventListener('click', () => {
-                    const prompt = tag.textContent.trim();
+     // Add to textarea when clicking suggestion
+     const suggestionTags = document.querySelectorAll('.suggestion-tag');
+     const textarea = document.querySelector('.search-input');
 
-                    // Jika textarea masih kosong atau hanya whitespace
-                    if (!textarea.value.trim()) {
-                        textarea.value = `Ask LayGen to ${prompt}`;
-                    } else {
-                        textarea.value += `, ${prompt}`;
-                    }
+     suggestionTags.forEach(tag => {
+       tag.addEventListener('click', () => {
+         const prompt = tag.textContent.trim();
 
-                    textarea.focus();
-                });
-            });
-        }
+         if (!textarea.value.trim()) {
+           textarea.value = `Ask LayGen to ${prompt}`;
+         } else {
+           textarea.value += `, ${prompt}`;
+         }
 
-        // Initialize everything when DOM is loaded
-        document.addEventListener('DOMContentLoaded', () => {
-            setupDropdown('platformDropdown', 'platformTrigger');
-            setupDropdown('revenueDropdown', 'revenueTrigger');
-            handleFormSubmission();
-            setupWaitlistButtons();
-        });
+         textarea.focus();
+       });
+     });
+   }
 
-        // Close modal when clicking overlay
-        document.addEventListener('click', (e) => {
-            if (e.target.classList.contains('modal-overlay')) {
-                closeWaitlistModal();
-            }
-        });
+   // Initialize everything when DOM is loaded
+   document.addEventListener('DOMContentLoaded', () => {
+     setupDropdown('platformDropdown', 'platformTrigger', 'platform');
+     setupDropdown('revenueDropdown', 'revenueTrigger', 'revenue');
+     handleFormSubmission();
+     setupWaitlistButtons();
+   });
 
-        // Close modal on Escape key
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                closeWaitlistModal();
-            }
-        });
+   // Close modal when clicking overlay
+   document.addEventListener('click', (e) => {
+     if (e.target.classList.contains('modal-overlay')) {
+       closeWaitlistModal();
+     }
+   });
 
+   // Close modal on Escape key
+   document.addEventListener('keydown', (e) => {
+     if (e.key === 'Escape') {
+       closeWaitlistModal();
+     }
+   });
 
-         let currentCount = 112378; // Start dari 112.000
-          const countUpEl = document.getElementById('countup');
+   // Counter animation
+   let currentCount = 112378;
+   const countUpEl = document.getElementById('countup');
 
-          function updateCounter() {
-            currentCount += Math.floor(Math.random() * 3); // Tambah 0 - 2 setiap interval
-            countUpEl.textContent = currentCount.toLocaleString();
-          }
+   function updateCounter() {
+     currentCount += Math.floor(Math.random() * 3);
+     countUpEl.textContent = currentCount.toLocaleString();
+   }
 
-          // Perbarui setiap 500 milidetik (0.5 detik), bisa diubah ke 1000 (1 detik) atau lebih cepat
-          setInterval(updateCounter, 500);
+   setInterval(updateCounter, 500);
 
+   // Bouncing objects animation
+   class BouncingObject {
+     constructor(element) {
+       this.el = element;
+       this.width = this.el.offsetWidth;
+       this.height = this.el.offsetHeight;
+       this.x = Math.random() * (window.innerWidth - this.width);
+       this.y = Math.random() * (window.innerHeight - this.height);
+       this.vx = (Math.random() * 1 + 1) * (Math.random() < 0.5 ? 1 : -1);
+       this.vy = (Math.random() * 1 + 1) * (Math.random() < 0.5 ? 1 : -1);
+     }
 
-        class BouncingObject {
-            constructor(element) {
-              this.el = element;
-              this.width = this.el.offsetWidth;
-              this.height = this.el.offsetHeight;
-              this.x = Math.random() * (window.innerWidth - this.width);
-              this.y = Math.random() * (window.innerHeight - this.height);
-              this.vx = (Math.random() * 1 + 1) * (Math.random() < 0.5 ? 1 : -1);
-              this.vy = (Math.random() * 1 + 1) * (Math.random() < 0.5 ? 1 : -1);
-            }
+     move() {
+       this.x += this.vx;
+       this.y += this.vy;
 
-            move() {
-              this.x += this.vx;
-              this.y += this.vy;
+       if (this.x <= 0 || this.x + this.width >= window.innerWidth) this.vx *= -1;
+       if (this.y <= 0 || this.y + this.height >= window.innerHeight) this.vy *= -1;
 
-              // Pantul jika menyentuh batas layar
-              if (this.x <= 0 || this.x + this.width >= window.innerWidth) this.vx *= -1;
-              if (this.y <= 0 || this.y + this.height >= window.innerHeight) this.vy *= -1;
+       this.el.style.left = `${this.x}px`;
+       this.el.style.top = `${this.y}px`;
+     }
+   }
 
-              this.el.style.left = `${this.x}px`;
-              this.el.style.top = `${this.y}px`;
-            }
-          }
+   const objects = [];
+   document.querySelectorAll('.bouncing-object').forEach(el => {
+     objects.push(new BouncingObject(el));
+   });
 
-          const objects = [];
-          document.querySelectorAll('.bouncing-object').forEach(el => {
-            objects.push(new BouncingObject(el));
-          });
+   function animate() {
+     objects.forEach(obj => obj.move());
+     requestAnimationFrame(animate);
+   }
 
-          function animate() {
-            objects.forEach(obj => obj.move());
-            requestAnimationFrame(animate);
-          }
+   animate();
 
-          animate();
+   // Textarea typing animation
+   const textarea = document.querySelector('.search-input');
+   const prefix = "Ask LayGen to ";
+   const messages = [
+     "build a featured products section ...",
+     "make an exit-intent popup offering free shipping ...",
+     "create a Black Friday landing page with a countdown timer and 30% off coupon ...",
+     "add an in stock label to my products ...",
+     "optimize all my product descriptions for SEO ...",
+     "send in-stock emails to all out-of-stock customers ..."
+   ];
 
+   let messageIndex = 0;
+   let charIndex = 0;
+   let isDeleting = false;
+   let typingSpeed = 30;
+   let delayAfterTyping = 1000;
 
-          // text area animate
-          const textarea = document.querySelector('.search-input');
-          const prefix = "Ask LayGen to ";
-          const messages = [
-            "build a featured products section ...",
-            "make an exit-intent popup offering free shipping ...",
-            "create a Black Friday landing page with a countdown timer and 30% off coupon ...",
-            "add an in stock label to my products ...",
-            "optimize all my product descriptions for SEO ...",
-            "send in-stock emails to all out-of-stock customers ..."
-          ];
+   let typingInterval = null;
+   let isManualInput = false;
 
-          let messageIndex = 0;
-          let charIndex = 0;
-          let isDeleting = false;
-          let typingSpeed = 30;
-          let delayAfterTyping = 1000;
+   function type() {
+     const currentMessage = messages[messageIndex];
+     const fullText = prefix + currentMessage;
 
-          let typingInterval = null;
-          let isManualInput = false;
+     if (!isDeleting) {
+       charIndex++;
+       textarea.value = prefix + currentMessage.substring(0, charIndex);
 
-          function type() {
-            const currentMessage = messages[messageIndex];
-            const fullText = prefix + currentMessage;
+       if (charIndex === currentMessage.length) {
+         isDeleting = true;
+         typingInterval = setTimeout(type, delayAfterTyping);
+         return;
+       }
+     } else {
+       charIndex--;
+       textarea.value = prefix + currentMessage.substring(0, charIndex);
 
-            if (!isDeleting) {
-              charIndex++;
-              textarea.value = prefix + currentMessage.substring(0, charIndex);
+       if (charIndex === 0) {
+         isDeleting = false;
+         messageIndex = (messageIndex + 1) % messages.length;
+       }
+     }
 
-              if (charIndex === currentMessage.length) {
-                isDeleting = true;
-                typingInterval = setTimeout(type, delayAfterTyping);
-                return;
-              }
-            } else {
-              charIndex--;
-              textarea.value = prefix + currentMessage.substring(0, charIndex);
+     typingInterval = setTimeout(type, isDeleting ? 30 : typingSpeed);
+   }
 
-              if (charIndex === 0) {
-                isDeleting = false;
-                messageIndex = (messageIndex + 1) % messages.length;
-              }
-            }
+   function startTyping() {
+     if (!typingInterval && !isManualInput) {
+       typingInterval = setTimeout(type, 1000);
+     }
+   }
 
-            typingInterval = setTimeout(type, isDeleting ? 30 : typingSpeed);
-          }
+   function stopTyping() {
+     if (typingInterval) {
+       clearTimeout(typingInterval);
+       typingInterval = null;
+     }
+     isManualInput = true;
+   }
 
-          function startTyping() {
-            if (!typingInterval && !isManualInput) {
-              typingInterval = setTimeout(type, 1000);
-            }
-          }
+   textarea.value = prefix;
+   startTyping();
 
-          function stopTyping() {
-            if (typingInterval) {
-              clearTimeout(typingInterval);
-              typingInterval = null;
-            }
-            isManualInput = true;
-          }
+   textarea.addEventListener("input", function() {
+     const value = textarea.value.trim();
 
-          document.addEventListener("DOMContentLoaded", function () {
-            textarea.value = prefix;
-            startTyping();
+     if (value === "" || value === prefix.trim()) {
+       isManualInput = false;
+       startTyping();
+     } else {
+       stopTyping();
+     }
+   });
 
-            // Ketika user mengetik sendiri
-            textarea.addEventListener("input", function () {
-              const value = textarea.value.trim();
-
-              if (value === "" || value === prefix.trim()) {
-                isManualInput = false;
-                startTyping();
-              } else {
-                stopTyping();
-              }
-            });
-
-            // Ketika klik suggestion-tag
-            const suggestionTags = document.querySelectorAll('.suggestion-tag');
-            suggestionTags.forEach(tag => {
-              tag.addEventListener('click', () => {
-                const prompt = tag.textContent.trim();
-                textarea.value = `${prefix}${prompt}`;
-                stopTyping();
-                textarea.focus();
-              });
-            });
-          });
+   const suggestionTags = document.querySelectorAll('.suggestion-tag');
+   suggestionTags.forEach(tag => {
+     tag.addEventListener('click', () => {
+       const prompt = tag.textContent.trim();
+       textarea.value = `${prefix}${prompt}`;
+       stopTyping();
+       textarea.focus();
+     });
+   });
   </script>
  </body>
 </html>

@@ -13,16 +13,37 @@ body {
     padding: 0;
 }
 
-
-
-
-
 .container {
     max-width: 1400px;
     margin: 0 auto;
     padding: 0 40px;
 }
 
+/* Mobile-specific fixes */
+@media (max-width: 480px) {
+  /* Fix form overflow */
+  .modal {
+    padding: 15px;
+    width: 95vw;
+  }
+  
+  /* Larger tap targets */
+  .search-button, .submit-btn {
+    min-width: 48px;
+    min-height: 48px;
+  }
+  
+  /* Better suggestion tags */
+  .suggestions-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  /* Platform logo sizing */
+  .platform-logo {
+    width: 120px;
+    padding: 15px;
+  }
+}
 /* Header */
 .header {
     background: transparent;

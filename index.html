@@ -1008,18 +1008,34 @@
      }
    });
 
-  // Replace your current suggestion tag handler with this:
+ // Replace your current suggestion tag click handler with this:
 suggestionTags.forEach(tag => {
   tag.addEventListener('click', () => {
     const prompt = tag.textContent.trim();
-    textarea.value = `Ask LayGen to ${prompt}`;
+    const currentValue = textarea.value.trim();
+    const prefix = "Ask LayGen to ";
+    
+    // Clear any typing animation
     stopTyping();
     
-    // Mobile-optimized focus
+    // Check if prefix exists or textarea is empty
+    if (!currentValue || currentValue === prefix.trim()) {
+      textarea.value = `${prefix}${prompt}`;
+    } 
+    // If user has modified the text, append the new prompt
+    else if (currentValue.endsWith(",") || currentValue.endsWith(" ")) {
+      textarea.value = `${currentValue} ${prompt}`;
+    }
+    else {
+      textarea.value = `${currentValue}, ${prompt}`;
+    }
+    
+    // Ensure smooth focus on all devices
     setTimeout(() => {
       textarea.focus();
+      // Place cursor at end
       textarea.setSelectionRange(textarea.value.length, textarea.value.length);
-    }, 50);
+    }, 10);
   });
 });
   </script>

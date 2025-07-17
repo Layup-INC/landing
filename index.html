@@ -770,66 +770,82 @@
    }
 
    // Handle form submission
-   function handleFormSubmission() {
-     const form = document.getElementById('waitlistForm');
-     const submitBtn = document.getElementById('submitBtn');
-     
-     form.addEventListener('submit', async (e) => {
-       e.preventDefault();
-       const businessName = document.getElementById('businessName').value.trim();
-       const email = document.getElementById('email').value.trim();
-       const storeUrl = document.getElementById('storeUrl').value.trim();
-       const platform = document.getElementById('platform').value;
-       const revenue = document.getElementById('revenue').value;
+// Handle form submission
+function handleFormSubmission() {
+  const form = document.getElementById('waitlistForm');
+  const submitBtn = document.getElementById('submitBtn');
+  const countUpEl = document.getElementById('countup');
+  
+  // Load initial count from localStorage or default
+  let currentCount = parseInt(localStorage.getItem('waitlistCount')) || 112378;
+  countUpEl.textContent = currentCount.toLocaleString();
+  
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const businessName = document.getElementById('businessName').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const storeUrl = document.getElementById('storeUrl').value.trim();
+    const platform = document.getElementById('platform').value;
+    const revenue = document.getElementById('revenue').value;
 
-       // Validate form
-       if (!businessName || !email || !storeUrl || !platform || !revenue) {
-         alert('Please fill in all fields');
-         return;
-       }
+    // Validate form
+    if (!businessName || !email || !storeUrl || !platform || !revenue) {
+      alert('Please fill in all fields');
+      return;
+    }
 
-       // Validate email format
-       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-         alert('Please enter a valid email address');
-         return;
-       }
+    // Validate email format
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      alert('Please enter a valid email address');
+      return;
+    }
 
-       // Validate URL format
-       try {
-         new URL(storeUrl);
-       } catch (e) {
-         alert('Please enter a valid store URL (include https://)');
-         return;
-       }
+    // Validate URL format
+    try {
+      new URL(storeUrl);
+    } catch (e) {
+      alert('Please enter a valid store URL (include https://)');
+      return;
+    }
 
-       // Disable button during submission
-       submitBtn.disabled = true;
-       submitBtn.textContent = 'Submitting...';
+    // Disable button during submission
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Submitting...';
 
-       try {
-         const res = await fetch('/api/join-waitlist', {
-           method: 'POST',
-           headers: {
-             'Content-Type': 'application/json',
-           },
-           body: JSON.stringify({businessName, email, storeUrl, platform, revenue })
-         });
+    try {
+      const res = await fetch('/api/join-waitlist', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({businessName, email, storeUrl, platform, revenue })
+      });
 
-         if (res.ok) {
-           showThankYouStep();
-         } else {
-           const error = await res.json();
-           alert(`Submission failed: ${error.error || 'Unknown error'}`);
-         }
-       } catch (err) {
-         console.error('Submission error:', err);
-         alert('Network error. Please try again.');
-       } finally {
-         submitBtn.disabled = false;
-         submitBtn.textContent = 'Join the Waitlist — It\'s Free';
-       }
-     });
-   }
+      const data = await res.json();
+
+      if (res.ok) {
+        // Increment counter on successful submission
+        currentCount += data.countIncrement || 1;
+        localStorage.setItem('waitlistCount', currentCount);
+        countUpEl.textContent = currentCount.toLocaleString();
+        
+        // Add animation effect
+        countUpEl.classList.add('count-updated');
+        setTimeout(() => countUpEl.classList.remove('count-updated'), 500);
+        
+        showThankYouStep();
+      } else {
+        alert(`Submission failed: ${data.error || 'Unknown error'}`);
+      }
+    } catch (err) {
+      console.error('Submission error:', err);
+      alert('Network error. Please try again.');
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Join the Waitlist — It\'s Free';
+    }
+  });
+}
 
    // Add click handlers to all waitlist buttons
    function setupWaitlistButtons() {

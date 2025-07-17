@@ -906,12 +906,7 @@ function handleFormSubmission() {
    let currentCount = 112378;
    const countUpEl = document.getElementById('countup');
 
-   function updateCounter() {
-     currentCount += Math.floor(Math.random() * 3);
-     countUpEl.textContent = currentCount.toLocaleString();
-   }
-
-   setInterval(updateCounter, 500);
+   
 
    // Bouncing objects animation
    class BouncingObject {

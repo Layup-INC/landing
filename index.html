@@ -396,7 +396,7 @@
     </p>
     <div class="cta-stats">
      <div class="stat-number" id="countup">
-      517
+      500
      </div>
      <div class="stat-label">
       Early Adopters Waiting
@@ -769,83 +769,81 @@
      });
    }
 
-   // Handle form submission
-// Handle form submission
-function handleFormSubmission() {
-  const form = document.getElementById('waitlistForm');
-  const submitBtn = document.getElementById('submitBtn');
-  const countUpEl = document.getElementById('countup');
-  
-  // Load initial count from localStorage or default
-  let currentCount = parseInt(localStorage.getItem('waitlistCount')) || 112378;
-  countUpEl.textContent = currentCount.toLocaleString();
-  
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const businessName = document.getElementById('businessName').value.trim();
-    const email = document.getElementById('email').value.trim();
-    const storeUrl = document.getElementById('storeUrl').value.trim();
-    const platform = document.getElementById('platform').value;
-    const revenue = document.getElementById('revenue').value;
+   // Handle form submission - UPDATED VERSION
+   function handleFormSubmission() {
+     const form = document.getElementById('waitlistForm');
+     const submitBtn = document.getElementById('submitBtn');
+     const countUpEl = document.getElementById('countup');
+     
+     // Initialize counter with seed value
+     let currentCount = 500;
+     countUpEl.textContent = currentCount.toLocaleString();
+     
+     form.addEventListener('submit', async (e) => {
+       e.preventDefault();
+       const businessName = document.getElementById('businessName').value.trim();
+       const email = document.getElementById('email').value.trim();
+       const storeUrl = document.getElementById('storeUrl').value.trim();
+       const platform = document.getElementById('platform').value;
+       const revenue = document.getElementById('revenue').value;
 
-    // Validate form
-    if (!businessName || !email || !storeUrl || !platform || !revenue) {
-      alert('Please fill in all fields');
-      return;
-    }
+       // Validate form
+       if (!businessName || !email || !storeUrl || !platform || !revenue) {
+         alert('Please fill in all fields');
+         return;
+       }
 
-    // Validate email format
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      alert('Please enter a valid email address');
-      return;
-    }
+       // Validate email format
+       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+         alert('Please enter a valid email address');
+         return;
+       }
 
-    // Validate URL format
-    try {
-      new URL(storeUrl);
-    } catch (e) {
-      alert('Please enter a valid store URL (include https://)');
-      return;
-    }
+       // Validate URL format
+       try {
+         new URL(storeUrl);
+       } catch (e) {
+         alert('Please enter a valid store URL (include https://)');
+         return;
+       }
 
-    // Disable button during submission
-    submitBtn.disabled = true;
-    submitBtn.textContent = 'Submitting...';
+       // Disable button during submission
+       submitBtn.disabled = true;
+       submitBtn.textContent = 'Submitting...';
 
-    try {
-      const res = await fetch('/api/join-waitlist', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({businessName, email, storeUrl, platform, revenue })
-      });
+       try {
+         const res = await fetch('/api/join-waitlist', {
+           method: 'POST',
+           headers: {
+             'Content-Type': 'application/json',
+           },
+           body: JSON.stringify({businessName, email, storeUrl, platform, revenue })
+         });
 
-      const data = await res.json();
+         const data = await res.json();
 
-      if (res.ok) {
-        // Increment counter on successful submission
-        currentCount += data.countIncrement || 1;
-        localStorage.setItem('waitlistCount', currentCount);
-        countUpEl.textContent = currentCount.toLocaleString();
-        
-        // Add animation effect
-        countUpEl.classList.add('count-updated');
-        setTimeout(() => countUpEl.classList.remove('count-updated'), 500);
-        
-        showThankYouStep();
-      } else {
-        alert(`Submission failed: ${data.error || 'Unknown error'}`);
-      }
-    } catch (err) {
-      console.error('Submission error:', err);
-      alert('Network error. Please try again.');
-    } finally {
-      submitBtn.disabled = false;
-      submitBtn.textContent = 'Join the Waitlist — It\'s Free';
-    }
-  });
-}
+         if (res.ok) {
+           // Update counter with response from API
+           currentCount = data.currentCount || currentCount + 1;
+           countUpEl.textContent = currentCount.toLocaleString();
+           
+           // Add animation effect
+           countUpEl.classList.add('count-updated');
+           setTimeout(() => countUpEl.classList.remove('count-updated'), 500);
+           
+           showThankYouStep();
+         } else {
+           alert(`Submission failed: ${data.error || 'Unknown error'}`);
+         }
+       } catch (err) {
+         console.error('Submission error:', err);
+         alert('Network error. Please try again.');
+       } finally {
+         submitBtn.disabled = false;
+         submitBtn.textContent = 'Join the Waitlist — It\'s Free';
+       }
+     });
+   }
 
    // Add click handlers to all waitlist buttons
    function setupWaitlistButtons() {
@@ -886,6 +884,11 @@ function handleFormSubmission() {
      setupDropdown('revenueDropdown', 'revenueTrigger', 'revenue');
      handleFormSubmission();
      setupWaitlistButtons();
+     
+     // Remove any automatic counter interval if it exists
+     if (window.counterInterval) {
+       clearInterval(window.counterInterval);
+     }
    });
 
    // Close modal when clicking overlay
@@ -901,12 +904,6 @@ function handleFormSubmission() {
        closeWaitlistModal();
      }
    });
-
-   // Counter animation
-   let currentCount = 112378;
-   const countUpEl = document.getElementById('countup');
-
-   
 
    // Bouncing objects animation
    class BouncingObject {
@@ -945,133 +942,123 @@ function handleFormSubmission() {
    animate();
 
    // Textarea typing animation
-   // Textarea typing animation
-const textarea = document.querySelector('.search-input');
-const prefix = "Ask LayGen to ";
-const messages = [
-  "build a featured products section ...",
-  "make an exit-intent popup offering free shipping ...",
-  "create a Black Friday landing page with a countdown timer and 30% off coupon ...",
-  "add an in stock label to my products ...",
-  "optimize all my product descriptions for SEO ...",
-  "send in-stock emails to all out-of-stock customers ..."
-];
+   const textarea = document.querySelector('.search-input');
+   const prefix = "Ask LayGen to ";
+   const messages = [
+     "build a featured products section ...",
+     "make an exit-intent popup offering free shipping ...",
+     "create a Black Friday landing page with a countdown timer and 30% off coupon ...",
+     "add an in stock label to my products ...",
+     "optimize all my product descriptions for SEO ...",
+     "send in-stock emails to all out-of-stock customers ..."
+   ];
 
-let messageIndex = 0;
-let charIndex = 0;
-let isDeleting = false;
-let typingSpeed = 30;
-let delayAfterTyping = 1000;
-let typingInterval = null;
-let isManualInput = false;
+   let messageIndex = 0;
+   let charIndex = 0;
+   let isDeleting = false;
+   let typingSpeed = 30;
+   let delayAfterTyping = 1000;
+   let typingInterval = null;
+   let isManualInput = false;
 
-function type() {
-  if (isManualInput) return;
-  
-  const currentMessage = messages[messageIndex];
-  const fullText = prefix + currentMessage;
+   function type() {
+     if (isManualInput) return;
+     
+     const currentMessage = messages[messageIndex];
+     const fullText = prefix + currentMessage;
 
-  if (!isDeleting) {
-    charIndex++;
-    textarea.placeholder = prefix + currentMessage.substring(0, charIndex);
+     if (!isDeleting) {
+       charIndex++;
+       textarea.placeholder = prefix + currentMessage.substring(0, charIndex);
 
-    if (charIndex === currentMessage.length) {
-      isDeleting = true;
-      typingInterval = setTimeout(type, delayAfterTyping);
-      return;
-    }
-  } else {
-    charIndex--;
-    textarea.placeholder = prefix + currentMessage.substring(0, charIndex);
+       if (charIndex === currentMessage.length) {
+         isDeleting = true;
+         typingInterval = setTimeout(type, delayAfterTyping);
+         return;
+       }
+     } else {
+       charIndex--;
+       textarea.placeholder = prefix + currentMessage.substring(0, charIndex);
 
-    if (charIndex === 0) {
-      isDeleting = false;
-      messageIndex = (messageIndex + 1) % messages.length;
-    }
-  }
+       if (charIndex === 0) {
+         isDeleting = false;
+         messageIndex = (messageIndex + 1) % messages.length;
+       }
+     }
 
-  typingInterval = setTimeout(type, isDeleting ? 30 : typingSpeed);
-}
+     typingInterval = setTimeout(type, isDeleting ? 30 : typingSpeed);
+   }
 
-function startTyping() {
-  if (!typingInterval && !isManualInput) {
-    // Reset animation state
-    messageIndex = 0;
-    charIndex = 0;
-    isDeleting = false;
-    typingInterval = setTimeout(type, 1000);
-  }
-}
+   function startTyping() {
+     if (!typingInterval && !isManualInput) {
+       // Reset animation state
+       messageIndex = 0;
+       charIndex = 0;
+       isDeleting = false;
+       typingInterval = setTimeout(type, 1000);
+     }
+   }
 
-function stopTyping() {
-  if (typingInterval) {
-    clearTimeout(typingInterval);
-    typingInterval = null;
-  }
-}
+   function stopTyping() {
+     if (typingInterval) {
+       clearTimeout(typingInterval);
+       typingInterval = null;
+     }
+   }
 
-// Initialize with empty value but animated placeholder
-textarea.value = '';
-startTyping();
+   // Initialize with empty value but animated placeholder
+   textarea.value = '';
+   startTyping();
 
-// Event listeners
-textarea.addEventListener("focus", function() {
-  stopTyping();
-  isManualInput = true;
-  // Keep current placeholder text static
-  textarea.placeholder = prefix + messages[0];
-});
+   // Event listeners
+   textarea.addEventListener("focus", function() {
+     stopTyping();
+     isManualInput = true;
+     // Keep current placeholder text static
+     textarea.placeholder = prefix + messages[0];
+   });
 
-textarea.addEventListener("blur", function() {
-  if (!textarea.value.trim()) {
-    isManualInput = false;
-    startTyping();
-  }
-});
+   textarea.addEventListener("blur", function() {
+     if (!textarea.value.trim()) {
+       isManualInput = false;
+       startTyping();
+     }
+   });
 
-textarea.addEventListener("input", function() {
-  const value = textarea.value.trim();
-  isManualInput = value !== "";
-});
+   textarea.addEventListener("input", function() {
+     const value = textarea.value.trim();
+     isManualInput = value !== "";
+   });
 
-// 1. First remove ALL existing event listeners from suggestion tags
-const suggestionTags = document.querySelectorAll('.suggestion-tag');
-suggestionTags.forEach(tag => {
-  const newTag = tag.cloneNode(true);
-  tag.parentNode.replaceChild(newTag, tag);
-});
-
-// 2. Get fresh references to the tags
-const freshTags = document.querySelectorAll('.suggestion-tag');
-
-// 3. Add new clean click handler
-freshTags.forEach(tag => {
-  tag.addEventListener('click', function(e) {
-    e.stopImmediatePropagation(); // Critical - stops other handlers
-    
-    // Stop animation if exists
-    if (window.typingInterval) {
-      clearInterval(window.typingInterval);
-      window.typingInterval = null;
-    }
-    
-    // Get clean prompt text
-    const prompt = this.textContent.trim();
-    const textarea = document.querySelector('.search-input');
-    
-    // COMPLETELY replace content (never append)
-    textarea.value = `Ask LayGen to ${prompt}`;
-    
-    // Focus and position cursor
-    setTimeout(() => {
-      textarea.focus();
-      textarea.setSelectionRange(textarea.value.length, textarea.value.length);
-    }, 10);
-    
-    // Prevent any other default behavior
-    return false;
-  });
-}, {once: true}); // Important: only bind once
+   // Suggestion tags click handler
+   const suggestionTags = document.querySelectorAll('.suggestion-tag');
+   suggestionTags.forEach(tag => {
+     tag.addEventListener('click', function(e) {
+       e.stopImmediatePropagation(); // Critical - stops other handlers
+       
+       // Stop animation if exists
+       if (window.typingInterval) {
+         clearInterval(window.typingInterval);
+         window.typingInterval = null;
+       }
+       
+       // Get clean prompt text
+       const prompt = this.textContent.trim();
+       const textarea = document.querySelector('.search-input');
+       
+       // COMPLETELY replace content (never append)
+       textarea.value = `Ask LayGen to ${prompt}`;
+       
+       // Focus and position cursor
+       setTimeout(() => {
+         textarea.focus();
+         textarea.setSelectionRange(textarea.value.length, textarea.value.length);
+       }, 10);
+       
+       // Prevent any other default behavior
+       return false;
+     });
+   });
   </script>
  </body>
 </html>

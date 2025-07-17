@@ -40,7 +40,13 @@ export default async function handler(req, res) {
       }
     });
 
-    return res.status(200).json({ success: true });
+    // Get current count from Notion (optional)
+    // const currentCount = await getCurrentCountFromNotion(notion);
+    
+    return res.status(200).json({ 
+      success: true,
+      countIncrement: 1 // Tell client to increment counter
+    });
 
   } catch (error) {
     console.error('API Error:', error);
@@ -50,4 +56,13 @@ export default async function handler(req, res) {
         : error.message 
     });
   }
+}
+
+// Optional function to get current count from Notion
+async function getCurrentCountFromNotion(notion) {
+  const response = await notion.databases.query({
+    database_id: process.env.NOTION_DATABASE_ID,
+    filter: { property: "Status", select: { equals: "Active" } }
+  });
+  return response.results.length;
 }

@@ -10,13 +10,25 @@ export default async function handler(req, res) {
     return res.status(403).json({ error: 'Access forbidden' });
   }
 
-  // Only allow POST
+  // Handle GET request for count
+  if (req.method === 'GET') {
+    try {
+      const notion = new Client({ auth: process.env.NOTION_TOKEN });
+      const count = await getCurrentCountFromNotion(notion);
+      return res.status(200).json({ count });
+    } catch (error) {
+      console.error('Error fetching count:', error);
+      return res.status(500).json({ error: 'Failed to fetch count' });
+    }
+  }
+
+  // Only allow POST for submissions
   if (req.method !== 'POST') {
-    res.setHeader('Allow', 'POST');
+    res.setHeader('Allow', ['GET', 'POST']);
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  // Parse body
+  // Parse body for POST request
   let body;
   try {
     body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
@@ -40,12 +52,12 @@ export default async function handler(req, res) {
       }
     });
 
-    // Get current count from Notion
-    const currentCount = await getCurrentCountFromNotion(notion);
+    // Get updated count from Notion
+    const count = await getCurrentCountFromNotion(notion);
     
     return res.status(200).json({ 
       success: true,
-      count: currentCount // Return the actual count from Notion
+      count
     });
 
   } catch (error) {
@@ -69,6 +81,6 @@ async function getCurrentCountFromNotion(notion) {
     return response.results.length;
   } catch (error) {
     console.error('Error fetching count from Notion:', error);
-    return 0; // Return 0 if there's an error
+    throw error; // Re-throw to be handled by the caller
   }
 }

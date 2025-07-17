@@ -934,106 +934,111 @@
    animate();
 
    // Textarea typing animation
-   const textarea = document.querySelector('.search-input');
-   const prefix = "Ask LayGen to ";
-   const messages = [
-     "build a featured products section ...",
-     "make an exit-intent popup offering free shipping ...",
-     "create a Black Friday landing page with a countdown timer and 30% off coupon ...",
-     "add an in stock label to my products ...",
-     "optimize all my product descriptions for SEO ...",
-     "send in-stock emails to all out-of-stock customers ..."
-   ];
+   // Textarea typing animation
+const textarea = document.querySelector('.search-input');
+const prefix = "Ask LayGen to ";
+const messages = [
+  "build a featured products section ...",
+  "make an exit-intent popup offering free shipping ...",
+  "create a Black Friday landing page with a countdown timer and 30% off coupon ...",
+  "add an in stock label to my products ...",
+  "optimize all my product descriptions for SEO ...",
+  "send in-stock emails to all out-of-stock customers ..."
+];
 
-   let messageIndex = 0;
-   let charIndex = 0;
-   let isDeleting = false;
-   let typingSpeed = 30;
-   let delayAfterTyping = 1000;
+let messageIndex = 0;
+let charIndex = 0;
+let isDeleting = false;
+let typingSpeed = 30;
+let delayAfterTyping = 1000;
+let typingInterval = null;
+let isManualInput = false;
 
-   let typingInterval = null;
-   let isManualInput = false;
+function type() {
+  if (isManualInput) return;
+  
+  const currentMessage = messages[messageIndex];
+  const fullText = prefix + currentMessage;
 
-   function type() {
-     const currentMessage = messages[messageIndex];
-     const fullText = prefix + currentMessage;
+  if (!isDeleting) {
+    charIndex++;
+    textarea.placeholder = prefix + currentMessage.substring(0, charIndex);
 
-     if (!isDeleting) {
-       charIndex++;
-       textarea.value = prefix + currentMessage.substring(0, charIndex);
+    if (charIndex === currentMessage.length) {
+      isDeleting = true;
+      typingInterval = setTimeout(type, delayAfterTyping);
+      return;
+    }
+  } else {
+    charIndex--;
+    textarea.placeholder = prefix + currentMessage.substring(0, charIndex);
 
-       if (charIndex === currentMessage.length) {
-         isDeleting = true;
-         typingInterval = setTimeout(type, delayAfterTyping);
-         return;
-       }
-     } else {
-       charIndex--;
-       textarea.value = prefix + currentMessage.substring(0, charIndex);
+    if (charIndex === 0) {
+      isDeleting = false;
+      messageIndex = (messageIndex + 1) % messages.length;
+    }
+  }
 
-       if (charIndex === 0) {
-         isDeleting = false;
-         messageIndex = (messageIndex + 1) % messages.length;
-       }
-     }
+  typingInterval = setTimeout(type, isDeleting ? 30 : typingSpeed);
+}
 
-     typingInterval = setTimeout(type, isDeleting ? 30 : typingSpeed);
-   }
+function startTyping() {
+  if (!typingInterval && !isManualInput) {
+    // Reset animation state
+    messageIndex = 0;
+    charIndex = 0;
+    isDeleting = false;
+    typingInterval = setTimeout(type, 1000);
+  }
+}
 
-   function startTyping() {
-     if (!typingInterval && !isManualInput) {
-       typingInterval = setTimeout(type, 1000);
-     }
-   }
+function stopTyping() {
+  if (typingInterval) {
+    clearTimeout(typingInterval);
+    typingInterval = null;
+  }
+}
 
-   function stopTyping() {
-     if (typingInterval) {
-       clearTimeout(typingInterval);
-       typingInterval = null;
-     }
-     isManualInput = true;
-   }
+// Initialize with empty value but animated placeholder
+textarea.value = '';
+startTyping();
 
-   textarea.value = prefix;
-   startTyping();
+// Event listeners
+textarea.addEventListener("focus", function() {
+  stopTyping();
+  isManualInput = true;
+  // Keep current placeholder text static
+  textarea.placeholder = prefix + messages[0];
+});
 
-   textarea.addEventListener("input", function() {
-     const value = textarea.value.trim();
+textarea.addEventListener("blur", function() {
+  if (!textarea.value.trim()) {
+    isManualInput = false;
+    startTyping();
+  }
+});
 
-     if (value === "" || value === prefix.trim()) {
-       isManualInput = false;
-       startTyping();
-     } else {
-       stopTyping();
-     }
-   });
+textarea.addEventListener("input", function() {
+  const value = textarea.value.trim();
+  isManualInput = value !== "";
+});
 
- // Replace your current suggestion tag click handler with this:
+// Suggestion tags click handler
+const suggestionTags = document.querySelectorAll('.suggestion-tag');
 suggestionTags.forEach(tag => {
   tag.addEventListener('click', () => {
     const prompt = tag.textContent.trim();
-    const currentValue = textarea.value.trim();
-    const prefix = "Ask LayGen to ";
-    
-    // Clear any typing animation
     stopTyping();
+    isManualInput = true;
     
-    // Check if prefix exists or textarea is empty
-    if (!currentValue || currentValue === prefix.trim()) {
+    if (!textarea.value.trim()) {
       textarea.value = `${prefix}${prompt}`;
-    } 
-    // If user has modified the text, append the new prompt
-    else if (currentValue.endsWith(",") || currentValue.endsWith(" ")) {
-      textarea.value = `${currentValue} ${prompt}`;
-    }
-    else {
-      textarea.value = `${currentValue}, ${prompt}`;
+    } else {
+      textarea.value += `, ${prompt}`;
     }
     
-    // Ensure smooth focus on all devices
     setTimeout(() => {
       textarea.focus();
-      // Place cursor at end
       textarea.setSelectionRange(textarea.value.length, textarea.value.length);
     }, 10);
   });

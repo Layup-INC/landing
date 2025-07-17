@@ -13,6 +13,16 @@ body {
     padding: 0;
 }
 
+/* Add to your style.css */
+.count-updated {
+  animation: countBounce 0.5s ease;
+}
+
+@keyframes countBounce {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); color: var(--blue); }
+}
+
 .container {
     max-width: 1400px;
     margin: 0 auto;

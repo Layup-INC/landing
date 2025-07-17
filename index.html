@@ -396,7 +396,7 @@
     </p>
     <div class="cta-stats">
      <div class="stat-number" id="countup">
-      500
+      0
      </div>
      <div class="stat-label">
       Early Adopters Waiting
@@ -735,28 +735,23 @@
      }, 250);
    }
 
-   // Handle dropdown functionality - IMPROVED VERSION
+   // Handle dropdown functionality
    function setupDropdown(dropdownId, triggerId, hiddenInputId) {
      const dropdown = document.getElementById(dropdownId);
      const trigger = document.getElementById(triggerId);
      const hiddenInput = document.getElementById(hiddenInputId);
      const options = dropdown.querySelectorAll('.dropdown-option');
 
-     // Initialize dropdown state
-     dropdown.classList.remove('active');
-
-     trigger.addEventListener('click', (e) => {
-       e.stopPropagation();
+     trigger.addEventListener('click', () => {
        dropdown.classList.toggle('active');
      });
 
      options.forEach(option => {
-       option.addEventListener('click', (e) => {
-         e.stopPropagation();
+       option.addEventListener('click', () => {
          const value = option.dataset.value;
-         const text = option.textContent.trim();
+         const text = option.textContent;
          
-         trigger.querySelector('span:first-child').textContent = text;
+         trigger.querySelector('span').textContent = text;
          trigger.classList.remove('placeholder');
          hiddenInput.value = value;
          
@@ -767,23 +762,50 @@
        });
      });
 
-     // Close when clicking outside
      document.addEventListener('click', (e) => {
-       if (!dropdown.contains(e.target) {
+       if (!dropdown.contains(e.target)) {
          dropdown.classList.remove('active');
        }
      });
    }
 
-   // Handle form submission - IMPROVED VERSION
-   async function handleFormSubmission() {
+   // Initialize counter from Notion
+   async function initializeCounter() {
+     try {
+       const response = await fetch('/api/join-waitlist', {
+         method: 'POST',
+         headers: {
+           'Content-Type': 'application/json',
+         },
+         body: JSON.stringify({}) // Empty body just to trigger count fetch
+       });
+       
+       if (response.ok) {
+         const data = await response.json();
+         const count = data.count || 0;
+         document.getElementById('countup').textContent = count.toLocaleString();
+         localStorage.setItem('waitlistCount', count);
+       }
+     } catch (err) {
+       console.error('Error fetching initial count:', err);
+       // Fallback to localStorage if API fails
+       const storedCount = parseInt(localStorage.getItem('waitlistCount')) || 0;
+       document.getElementById('countup').textContent = storedCount.toLocaleString();
+     }
+   }
+
+   // Handle form submission
+   function handleFormSubmission() {
      const form = document.getElementById('waitlistForm');
      const submitBtn = document.getElementById('submitBtn');
      const countUpEl = document.getElementById('countup');
      
+     // Initialize with stored count or 0
+     let currentCount = parseInt(localStorage.getItem('waitlistCount')) || 0;
+     countUpEl.textContent = currentCount.toLocaleString();
+     
      form.addEventListener('submit', async (e) => {
        e.preventDefault();
-       
        const businessName = document.getElementById('businessName').value.trim();
        const email = document.getElementById('email').value.trim();
        const storeUrl = document.getElementById('storeUrl').value.trim();
@@ -815,71 +837,38 @@
        submitBtn.textContent = 'Submitting...';
 
        try {
-         const response = await fetch('/api/waitlist', {
+         const res = await fetch('/api/join-waitlist', {
            method: 'POST',
            headers: {
              'Content-Type': 'application/json',
            },
-           body: JSON.stringify({
-             businessName,
-             email,
-             storeUrl,
-             platform,
-             revenue
-           })
+           body: JSON.stringify({businessName, email, storeUrl, platform, revenue })
          });
 
-         const data = await response.json();
+         const data = await res.json();
 
-         if (response.ok) {
-           // Update counter with response from API
-           document.getElementById('countup').textContent = data.count;
-           showThankYouStep();
+         if (res.ok) {
+           // Update counter with actual count from Notion
+           currentCount = data.count || currentCount + 1;
+           localStorage.setItem('waitlistCount', currentCount);
+           countUpEl.textContent = currentCount.toLocaleString();
            
-           // Update counter across all devices
-           await updateGlobalCounter();
+           // Add animation effect
+           countUpEl.classList.add('count-updated');
+           setTimeout(() => countUpEl.classList.remove('count-updated'), 500);
+           
+           showThankYouStep();
          } else {
-           alert(data.message || 'Submission failed. Please try again.');
+           alert(`Submission failed: ${data.error || 'Unknown error'}`);
          }
-       } catch (error) {
-         console.error('Error:', error);
+       } catch (err) {
+         console.error('Submission error:', err);
          alert('Network error. Please try again.');
        } finally {
          submitBtn.disabled = false;
          submitBtn.textContent = 'Join the Waitlist — It\'s Free';
        }
      });
-   }
-
-   // Get and update global counter - NEW FUNCTION
-   async function updateGlobalCounter() {
-     try {
-       const response = await fetch('/api/waitlist/count');
-       const data = await response.json();
-       
-       if (response.ok) {
-         const countElement = document.getElementById('countup');
-         const currentCount = parseInt(countElement.textContent.replace(/,/g, ''));
-         const newCount = data.count;
-         
-         if (newCount > currentCount) {
-           // Animate the count up
-           let counter = currentCount;
-           const increment = Math.ceil((newCount - currentCount) / 20);
-           
-           const timer = setInterval(() => {
-             counter += increment;
-             if (counter >= newCount) {
-               counter = newCount;
-               clearInterval(timer);
-             }
-             countElement.textContent = counter.toLocaleString();
-           }, 50);
-         }
-       }
-     } catch (error) {
-       console.error('Error updating counter:', error);
-     }
    }
 
    // Add click handlers to all waitlist buttons
@@ -914,6 +903,29 @@
        });
      });
    }
+
+   // Initialize everything when DOM is loaded
+   document.addEventListener('DOMContentLoaded', () => {
+     setupDropdown('platformDropdown', 'platformTrigger', 'platform');
+     setupDropdown('revenueDropdown', 'revenueTrigger', 'revenue');
+     handleFormSubmission();
+     setupWaitlistButtons();
+     initializeCounter(); // Initialize the counter on page load
+   });
+
+   // Close modal when clicking overlay
+   document.addEventListener('click', (e) => {
+     if (e.target.classList.contains('modal-overlay')) {
+       closeWaitlistModal();
+     }
+   });
+
+   // Close modal on Escape key
+   document.addEventListener('keydown', (e) => {
+     if (e.key === 'Escape') {
+       closeWaitlistModal();
+     }
+   });
 
    // Bouncing objects animation
    class BouncingObject {
@@ -1040,9 +1052,18 @@
      isManualInput = value !== "";
    });
 
-   // Suggestion tags click handler
+   // 1. First remove ALL existing event listeners from suggestion tags
    const suggestionTags = document.querySelectorAll('.suggestion-tag');
    suggestionTags.forEach(tag => {
+     const newTag = tag.cloneNode(true);
+     tag.parentNode.replaceChild(newTag, tag);
+   });
+
+   // 2. Get fresh references to the tags
+   const freshTags = document.querySelectorAll('.suggestion-tag');
+
+   // 3. Add new clean click handler
+   freshTags.forEach(tag => {
      tag.addEventListener('click', function(e) {
        e.stopImmediatePropagation(); // Critical - stops other handlers
        
@@ -1068,40 +1089,7 @@
        // Prevent any other default behavior
        return false;
      });
-   });
-
-   // Initialize everything when DOM is loaded
-   document.addEventListener('DOMContentLoaded', async () => {
-     // Initialize dropdowns
-     setupDropdown('platformDropdown', 'platformTrigger', 'platform');
-     setupDropdown('revenueDropdown', 'revenueTrigger', 'revenue');
-     
-     // Setup form submission
-     handleFormSubmission();
-     
-     // Setup waitlist buttons
-     setupWaitlistButtons();
-     
-     // Get initial counter value
-     await updateGlobalCounter();
-     
-     // Set interval to periodically update counter (every 5 minutes)
-     setInterval(updateGlobalCounter, 300000);
-   });
-
-   // Close modal when clicking overlay
-   document.addEventListener('click', (e) => {
-     if (e.target.classList.contains('modal-overlay')) {
-       closeWaitlistModal();
-     }
-   });
-
-   // Close modal on Escape key
-   document.addEventListener('keydown', (e) => {
-     if (e.key === 'Escape') {
-       closeWaitlistModal();
-     }
-   });
+   }, {once: true}); // Important: only bind once
   </script>
  </body>
 </html>

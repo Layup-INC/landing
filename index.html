@@ -1031,10 +1031,22 @@ suggestionTags.forEach(tag => {
     stopTyping();
     isManualInput = true;
     
-    if (!textarea.value.trim()) {
+    const currentValue = textarea.value.trim();
+    const prefix = "Ask LayGen to ";
+    
+    // If textarea is empty or just contains the prefix
+    if (!currentValue || currentValue === prefix.trim()) {
       textarea.value = `${prefix}${prompt}`;
-    } else {
-      textarea.value += `, ${prompt}`;
+    } 
+    // If text already contains this exact prompt, don't add it again
+    else if (currentValue.includes(prompt)) {
+      // Just focus the field without changing content
+    }
+    // Otherwise append the new prompt
+    else {
+      // Remove any trailing commas or spaces first
+      const cleanValue = currentValue.replace(/[, ]+$/, '');
+      textarea.value = `${cleanValue}, ${prompt}`;
     }
     
     setTimeout(() => {

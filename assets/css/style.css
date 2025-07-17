@@ -13,7 +13,7 @@ body {
     padding: 0;
 }
 
-/* Add to your style.css */
+/* Counter animation */
 .count-updated {
   animation: countBounce 0.5s ease;
 }

@@ -81,7 +81,7 @@ body {
 }
 
 .logo img {
-    height: 32px;
+    height: 50px;
     width: auto;
 }
 
@@ -424,7 +424,7 @@ background: #fff;
 }
 
 .platform-logo {
-        background: rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.5);
     padding: 25px;
     border-radius: 12px;
     text-align: center;
@@ -453,8 +453,6 @@ background: #fff;
 
 /* Services Section */
 .services {
-
-    
     background: rgb(38 28 255 / 26%);
     padding: 140px 0;
     position: relative;
@@ -565,9 +563,9 @@ background: #fff;
 
 .service-features li::before {
     content: '';
-        width: 20px;
+    width: 20px;
     height: 20px;
-        background-size: contain !important;
+    background-size: contain !important;
     background: url(../icons/icon-check.svg) no-repeat center center;
     position: absolute;
     left: 0;

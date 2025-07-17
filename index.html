@@ -1008,15 +1008,14 @@
      }
    });
 
-   const suggestionTags = document.querySelectorAll('.suggestion-tag');
    suggestionTags.forEach(tag => {
-     tag.addEventListener('click', () => {
-       const prompt = tag.textContent.trim();
-       textarea.value = `${prompt}`;
-       stopTyping();
-       textarea.focus();
-     });
-   });
+  tag.addEventListener('click', () => {
+    const prompt = tag.textContent.trim();
+    textarea.value = `Ask LayGen to ${prompt}`; // Explicitly include prefix
+    stopTyping();
+    textarea.focus();
+  });
+});
   </script>
  </body>
 </html>

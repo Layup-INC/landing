@@ -735,23 +735,28 @@
      }, 250);
    }
 
-   // Handle dropdown functionality
+   // Handle dropdown functionality - IMPROVED VERSION
    function setupDropdown(dropdownId, triggerId, hiddenInputId) {
      const dropdown = document.getElementById(dropdownId);
      const trigger = document.getElementById(triggerId);
      const hiddenInput = document.getElementById(hiddenInputId);
      const options = dropdown.querySelectorAll('.dropdown-option');
 
-     trigger.addEventListener('click', () => {
+     // Initialize dropdown state
+     dropdown.classList.remove('active');
+
+     trigger.addEventListener('click', (e) => {
+       e.stopPropagation();
        dropdown.classList.toggle('active');
      });
 
      options.forEach(option => {
-       option.addEventListener('click', () => {
+       option.addEventListener('click', (e) => {
+         e.stopPropagation();
          const value = option.dataset.value;
-         const text = option.textContent;
+         const text = option.textContent.trim();
          
-         trigger.querySelector('span').textContent = text;
+         trigger.querySelector('span:first-child').textContent = text;
          trigger.classList.remove('placeholder');
          hiddenInput.value = value;
          
@@ -762,59 +767,28 @@
        });
      });
 
+     // Close when clicking outside
      document.addEventListener('click', (e) => {
-       if (!dropdown.contains(e.target)) {
+       if (!dropdown.contains(e.target) {
          dropdown.classList.remove('active');
        }
      });
    }
 
-    document.addEventListener('DOMContentLoaded', async () => {
-    setupDropdown('platformDropdown', 'platformTrigger', 'platform');
-    setupDropdown('revenueDropdown', 'revenueTrigger', 'revenue');
-    setupWaitlistButtons();
-    
-    // Fetch current count when page loads
-    try {
-      const response = await fetch('/api/join-waitlist', {
-        method: 'GET'
-      });
-      const data = await response.json();
-      if (response.ok) {
-        document.getElementById('countup').textContent = data.count.toLocaleString();
-      }
-    } catch (error) {
-      console.error('Error fetching count:', error);
-      // Fallback to seed value
-      document.getElementById('countup').textContent = '500';
-    }
-
-    // Initialize form submission handler
-    handleFormSubmission();
-  });
-
-
-
-    
-    
-
-   // Handle form submission - UPDATED VERSION
+   // Handle form submission - IMPROVED VERSION
    async function handleFormSubmission() {
-    const form = document.getElementById('waitlistForm');
-    const submitBtn = document.getElementById('submitBtn');
-    const countUpEl = document.getElementById('countup');
+     const form = document.getElementById('waitlistForm');
+     const submitBtn = document.getElementById('submitBtn');
+     const countUpEl = document.getElementById('countup');
      
-     // Initialize counter with seed value
-     let currentCount = 500;
-     countUpEl.textContent = currentCount.toLocaleString();
-     
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const businessName = document.getElementById('businessName').value.trim();
-      const email = document.getElementById('email').value.trim();
-      const storeUrl = document.getElementById('storeUrl').value.trim();
-      const platform = document.getElementById('platform').value;
-      const revenue = document.getElementById('revenue').value;
+     form.addEventListener('submit', async (e) => {
+       e.preventDefault();
+       
+       const businessName = document.getElementById('businessName').value.trim();
+       const email = document.getElementById('email').value.trim();
+       const storeUrl = document.getElementById('storeUrl').value.trim();
+       const platform = document.getElementById('platform').value;
+       const revenue = document.getElementById('revenue').value;
 
        // Validate form
        if (!businessName || !email || !storeUrl || !platform || !revenue) {
@@ -840,41 +814,73 @@
        submitBtn.disabled = true;
        submitBtn.textContent = 'Submitting...';
 
+       try {
+         const response = await fetch('/api/waitlist', {
+           method: 'POST',
+           headers: {
+             'Content-Type': 'application/json',
+           },
+           body: JSON.stringify({
+             businessName,
+             email,
+             storeUrl,
+             platform,
+             revenue
+           })
+         });
 
+         const data = await response.json();
 
-      try {
-        const res = await fetch('/api/join-waitlist', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({businessName, email, storeUrl, platform, revenue })
-        });
+         if (response.ok) {
+           // Update counter with response from API
+           document.getElementById('countup').textContent = data.count;
+           showThankYouStep();
+           
+           // Update counter across all devices
+           await updateGlobalCounter();
+         } else {
+           alert(data.message || 'Submission failed. Please try again.');
+         }
+       } catch (error) {
+         console.error('Error:', error);
+         alert('Network error. Please try again.');
+       } finally {
+         submitBtn.disabled = false;
+         submitBtn.textContent = 'Join the Waitlist — It\'s Free';
+       }
+     });
+   }
 
-        const data = await res.json();
-
-        if (res.ok) {
-          // Update counter with response from API
-          countUpEl.textContent = data.currentCount.toLocaleString();
-          
-          // Add animation effect
-          countUpEl.classList.add('count-updated');
-          setTimeout(() => countUpEl.classList.remove('count-updated'), 500);
-          
-          showThankYouStep();
-        } else {
-          alert(`Submission failed: ${data.error || 'Unknown error'}`);
-        }
-      } catch (err) {
-        console.error('Submission error:', err);
-        alert('Network error. Please try again.');
-      } finally {
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Join the Waitlist — It\'s Free';
-      }
-    });
-  }
-   
+   // Get and update global counter - NEW FUNCTION
+   async function updateGlobalCounter() {
+     try {
+       const response = await fetch('/api/waitlist/count');
+       const data = await response.json();
+       
+       if (response.ok) {
+         const countElement = document.getElementById('countup');
+         const currentCount = parseInt(countElement.textContent.replace(/,/g, ''));
+         const newCount = data.count;
+         
+         if (newCount > currentCount) {
+           // Animate the count up
+           let counter = currentCount;
+           const increment = Math.ceil((newCount - currentCount) / 20);
+           
+           const timer = setInterval(() => {
+             counter += increment;
+             if (counter >= newCount) {
+               counter = newCount;
+               clearInterval(timer);
+             }
+             countElement.textContent = counter.toLocaleString();
+           }, 50);
+         }
+       }
+     } catch (error) {
+       console.error('Error updating counter:', error);
+     }
+   }
 
    // Add click handlers to all waitlist buttons
    function setupWaitlistButtons() {
@@ -908,33 +914,6 @@
        });
      });
    }
-
-   // Initialize everything when DOM is loaded
-   document.addEventListener('DOMContentLoaded', () => {
-     setupDropdown('platformDropdown', 'platformTrigger', 'platform');
-     setupDropdown('revenueDropdown', 'revenueTrigger', 'revenue');
-     handleFormSubmission();
-     setupWaitlistButtons();
-     
-     // Remove any automatic counter interval if it exists
-     if (window.counterInterval) {
-       clearInterval(window.counterInterval);
-     }
-   });
-
-   // Close modal when clicking overlay
-   document.addEventListener('click', (e) => {
-     if (e.target.classList.contains('modal-overlay')) {
-       closeWaitlistModal();
-     }
-   });
-
-   // Close modal on Escape key
-   document.addEventListener('keydown', (e) => {
-     if (e.key === 'Escape') {
-       closeWaitlistModal();
-     }
-   });
 
    // Bouncing objects animation
    class BouncingObject {
@@ -1089,6 +1068,39 @@
        // Prevent any other default behavior
        return false;
      });
+   });
+
+   // Initialize everything when DOM is loaded
+   document.addEventListener('DOMContentLoaded', async () => {
+     // Initialize dropdowns
+     setupDropdown('platformDropdown', 'platformTrigger', 'platform');
+     setupDropdown('revenueDropdown', 'revenueTrigger', 'revenue');
+     
+     // Setup form submission
+     handleFormSubmission();
+     
+     // Setup waitlist buttons
+     setupWaitlistButtons();
+     
+     // Get initial counter value
+     await updateGlobalCounter();
+     
+     // Set interval to periodically update counter (every 5 minutes)
+     setInterval(updateGlobalCounter, 300000);
+   });
+
+   // Close modal when clicking overlay
+   document.addEventListener('click', (e) => {
+     if (e.target.classList.contains('modal-overlay')) {
+       closeWaitlistModal();
+     }
+   });
+
+   // Close modal on Escape key
+   document.addEventListener('keydown', (e) => {
+     if (e.key === 'Escape') {
+       closeWaitlistModal();
+     }
    });
   </script>
  </body>

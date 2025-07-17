@@ -1023,15 +1023,27 @@ textarea.addEventListener("input", function() {
   isManualInput = value !== "";
 });
 
-// Suggestion tags click handler - NEW VERSION 2
+// Suggestion tags click handler - NEW VERSION 3
+// First remove any existing listeners
 suggestionTags.forEach(tag => {
+  const newElement = tag.cloneNode(true);
+  tag.parentNode.replaceChild(newElement, tag);
+});
+
+// Get fresh references after replacing
+const freshSuggestionTags = document.querySelectorAll('.suggestion-tag');
+
+freshSuggestionTags.forEach(tag => {
   tag.addEventListener('click', () => {
     const prompt = tag.textContent.trim();
+    console.log('Clicked:', prompt); // Debug
+    
     stopTyping();
     isManualInput = true;
     
-    // Simply set the value to the new prompt with prefix
+    console.log('Before value:', textarea.value); // Debug
     textarea.value = `${prefix}${prompt}`;
+    console.log('After value:', textarea.value); // Debug
     
     setTimeout(() => {
       textarea.focus();

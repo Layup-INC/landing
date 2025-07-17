@@ -1008,12 +1008,18 @@
      }
    });
 
-   suggestionTags.forEach(tag => {
+  // Replace your current suggestion tag handler with this:
+suggestionTags.forEach(tag => {
   tag.addEventListener('click', () => {
     const prompt = tag.textContent.trim();
-    textarea.value = `Ask LayGen to ${prompt}`; // Explicitly include prefix
+    textarea.value = `Ask LayGen to ${prompt}`;
     stopTyping();
-    textarea.focus();
+    
+    // Mobile-optimized focus
+    setTimeout(() => {
+      textarea.focus();
+      textarea.setSelectionRange(textarea.value.length, textarea.value.length);
+    }, 50);
   });
 });
   </script>

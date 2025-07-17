@@ -1023,38 +1023,44 @@ textarea.addEventListener("input", function() {
   isManualInput = value !== "";
 });
 
-// First remove ALL existing event listeners from suggestion tags 1
+// 1. First remove ALL existing event listeners from suggestion tags
 const suggestionTags = document.querySelectorAll('.suggestion-tag');
 suggestionTags.forEach(tag => {
-  const newTag = tag.cloneNode(true); // Clone the element
-  tag.parentNode.replaceChild(newTag, tag); // Replace with clone (removes all listeners)
+  const newTag = tag.cloneNode(true);
+  tag.parentNode.replaceChild(newTag, tag);
 });
 
-// Get fresh references to the tags
+// 2. Get fresh references to the tags
 const freshTags = document.querySelectorAll('.suggestion-tag');
 
-// Add new clean click handlers
+// 3. Add new clean click handler
 freshTags.forEach(tag => {
-  tag.addEventListener('click', function() {
-    // Stop any typing animation
-    if (typeof stopTyping === 'function') stopTyping();
-    if (typeof isManualInput !== 'undefined') isManualInput = true;
+  tag.addEventListener('click', function(e) {
+    e.stopImmediatePropagation(); // Critical - stops other handlers
     
-    // Get the clean prompt text
+    // Stop animation if exists
+    if (window.typingInterval) {
+      clearInterval(window.typingInterval);
+      window.typingInterval = null;
+    }
+    
+    // Get clean prompt text
     const prompt = this.textContent.trim();
-    
-    // COMPLETELY replace textarea content (never append)
     const textarea = document.querySelector('.search-input');
+    
+    // COMPLETELY replace content (never append)
     textarea.value = `Ask LayGen to ${prompt}`;
     
-    // Focus and move cursor to end
-    textarea.focus();
-    textarea.setSelectionRange(textarea.value.length, textarea.value.length);
+    // Focus and position cursor
+    setTimeout(() => {
+      textarea.focus();
+      textarea.setSelectionRange(textarea.value.length, textarea.value.length);
+    }, 10);
     
-    // Prevent any default behavior that might cause appending
+    // Prevent any other default behavior
     return false;
   });
-});
+}, {once: true}); // Important: only bind once
   </script>
  </body>
 </html>

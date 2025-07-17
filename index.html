@@ -1023,32 +1023,40 @@ textarea.addEventListener("input", function() {
   isManualInput = value !== "";
 });
 
-// Suggestion tags click handler
+// Suggestion tags click handler - NEW VERSION
 const suggestionTags = document.querySelectorAll('.suggestion-tag');
+const textarea = document.querySelector('.search-input');
+const prefix = "Ask LayGen to ";
+
 suggestionTags.forEach(tag => {
   tag.addEventListener('click', () => {
     const prompt = tag.textContent.trim();
     stopTyping();
     isManualInput = true;
     
-    const currentValue = textarea.value.trim();
-    const prefix = "Ask LayGen to ";
+    // Get current value without prefix
+    let currentValue = textarea.value.trim();
     
-    // If textarea is empty or just contains the prefix
-    if (!currentValue || currentValue === prefix.trim()) {
-      textarea.value = `${prefix}${prompt}`;
-    } 
-    // If text already contains this exact prompt, don't add it again
-    else if (currentValue.includes(prompt)) {
-      // Just focus the field without changing content
-    }
-    // Otherwise append the new prompt
-    else {
-      // Remove any trailing commas or spaces first
-      const cleanValue = currentValue.replace(/[, ]+$/, '');
-      textarea.value = `${cleanValue}, ${prompt}`;
+    // If textarea starts with prefix, remove it for processing
+    if (currentValue.startsWith(prefix)) {
+      currentValue = currentValue.slice(prefix.length).trim();
     }
     
+    // Check if this exact prompt already exists in the textarea
+    const prompts = currentValue.split(',').map(p => p.trim());
+    const alreadyExists = prompts.some(p => p === prompt);
+    
+    if (!alreadyExists) {
+      // If textarea is empty or just contains the prefix
+      if (!currentValue) {
+        textarea.value = `${prefix}${prompt}`;
+      } else {
+        // Add the new prompt with comma separation
+        textarea.value = `${prefix}${prompts.join(', ')}, ${prompt}`;
+      }
+    }
+    
+    // Focus and position cursor at end
     setTimeout(() => {
       textarea.focus();
       textarea.setSelectionRange(textarea.value.length, textarea.value.length);

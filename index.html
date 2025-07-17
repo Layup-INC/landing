@@ -769,23 +769,52 @@
      });
    }
 
+    document.addEventListener('DOMContentLoaded', async () => {
+    setupDropdown('platformDropdown', 'platformTrigger', 'platform');
+    setupDropdown('revenueDropdown', 'revenueTrigger', 'revenue');
+    setupWaitlistButtons();
+    
+    // Fetch current count when page loads
+    try {
+      const response = await fetch('/api/join-waitlist', {
+        method: 'GET'
+      });
+      const data = await response.json();
+      if (response.ok) {
+        document.getElementById('countup').textContent = data.count.toLocaleString();
+      }
+    } catch (error) {
+      console.error('Error fetching count:', error);
+      // Fallback to seed value
+      document.getElementById('countup').textContent = '500';
+    }
+
+    // Initialize form submission handler
+    handleFormSubmission();
+  });
+
+
+
+    
+    
+
    // Handle form submission - UPDATED VERSION
-   function handleFormSubmission() {
-     const form = document.getElementById('waitlistForm');
-     const submitBtn = document.getElementById('submitBtn');
-     const countUpEl = document.getElementById('countup');
+   async function handleFormSubmission() {
+    const form = document.getElementById('waitlistForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const countUpEl = document.getElementById('countup');
      
      // Initialize counter with seed value
      let currentCount = 500;
      countUpEl.textContent = currentCount.toLocaleString();
      
-     form.addEventListener('submit', async (e) => {
-       e.preventDefault();
-       const businessName = document.getElementById('businessName').value.trim();
-       const email = document.getElementById('email').value.trim();
-       const storeUrl = document.getElementById('storeUrl').value.trim();
-       const platform = document.getElementById('platform').value;
-       const revenue = document.getElementById('revenue').value;
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const businessName = document.getElementById('businessName').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const storeUrl = document.getElementById('storeUrl').value.trim();
+      const platform = document.getElementById('platform').value;
+      const revenue = document.getElementById('revenue').value;
 
        // Validate form
        if (!businessName || !email || !storeUrl || !platform || !revenue) {
@@ -811,39 +840,41 @@
        submitBtn.disabled = true;
        submitBtn.textContent = 'Submitting...';
 
-       try {
-         const res = await fetch('/api/join-waitlist', {
-           method: 'POST',
-           headers: {
-             'Content-Type': 'application/json',
-           },
-           body: JSON.stringify({businessName, email, storeUrl, platform, revenue })
-         });
 
-         const data = await res.json();
 
-         if (res.ok) {
-           // Update counter with response from API
-           currentCount = data.currentCount || currentCount + 1;
-           countUpEl.textContent = currentCount.toLocaleString();
-           
-           // Add animation effect
-           countUpEl.classList.add('count-updated');
-           setTimeout(() => countUpEl.classList.remove('count-updated'), 500);
-           
-           showThankYouStep();
-         } else {
-           alert(`Submission failed: ${data.error || 'Unknown error'}`);
-         }
-       } catch (err) {
-         console.error('Submission error:', err);
-         alert('Network error. Please try again.');
-       } finally {
-         submitBtn.disabled = false;
-         submitBtn.textContent = 'Join the Waitlist — It\'s Free';
-       }
-     });
-   }
+      try {
+        const res = await fetch('/api/join-waitlist', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({businessName, email, storeUrl, platform, revenue })
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          // Update counter with response from API
+          countUpEl.textContent = data.currentCount.toLocaleString();
+          
+          // Add animation effect
+          countUpEl.classList.add('count-updated');
+          setTimeout(() => countUpEl.classList.remove('count-updated'), 500);
+          
+          showThankYouStep();
+        } else {
+          alert(`Submission failed: ${data.error || 'Unknown error'}`);
+        }
+      } catch (err) {
+        console.error('Submission error:', err);
+        alert('Network error. Please try again.');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Join the Waitlist — It\'s Free';
+      }
+    });
+  }
+   
 
    // Add click handlers to all waitlist buttons
    function setupWaitlistButtons() {

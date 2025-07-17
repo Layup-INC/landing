@@ -770,106 +770,106 @@
    }
 
    // Initialize counter from Notion
-   async function initializeCounter() {
-     try {
-       const response = await fetch('/api/join-waitlist', {
-         method: 'POST',
-         headers: {
-           'Content-Type': 'application/json',
-         },
-         body: JSON.stringify({}) // Empty body just to trigger count fetch
-       });
-       
-       if (response.ok) {
-         const data = await response.json();
-         const count = data.count || 0;
-         document.getElementById('countup').textContent = count.toLocaleString();
-         localStorage.setItem('waitlistCount', count);
-       }
-     } catch (err) {
-       console.error('Error fetching initial count:', err);
-       // Fallback to localStorage if API fails
-       const storedCount = parseInt(localStorage.getItem('waitlistCount')) || 0;
-       document.getElementById('countup').textContent = storedCount.toLocaleString();
-     }
-   }
+async function initializeCounter() {
+  try {
+    const response = await fetch('/api/join-waitlist', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    });
+    
+    if (response.ok) {
+      const data = await response.json();
+      const count = data.count || 0;
+      updateCounterDisplay(count);
+    } else {
+      console.error('Failed to fetch count:', response.status);
+      updateCounterDisplay(0);
+    }
+  } catch (err) {
+    console.error('Error fetching initial count:', err);
+    updateCounterDisplay(0);
+  }
+}
 
-   // Handle form submission
-   function handleFormSubmission() {
-     const form = document.getElementById('waitlistForm');
-     const submitBtn = document.getElementById('submitBtn');
-     const countUpEl = document.getElementById('countup');
-     
-     // Initialize with stored count or 0
-     let currentCount = parseInt(localStorage.getItem('waitlistCount')) || 0;
-     countUpEl.textContent = currentCount.toLocaleString();
-     
-     form.addEventListener('submit', async (e) => {
-       e.preventDefault();
-       const businessName = document.getElementById('businessName').value.trim();
-       const email = document.getElementById('email').value.trim();
-       const storeUrl = document.getElementById('storeUrl').value.trim();
-       const platform = document.getElementById('platform').value;
-       const revenue = document.getElementById('revenue').value;
+// Update counter display
+function updateCounterDisplay(count) {
+  const countUpEl = document.getElementById('countup');
+  countUpEl.textContent = count.toLocaleString();
+  localStorage.setItem('waitlistCount', count);
+}
 
-       // Validate form
-       if (!businessName || !email || !storeUrl || !platform || !revenue) {
-         alert('Please fill in all fields');
-         return;
-       }
+// Handle form submission
+function handleFormSubmission() {
+  const form = document.getElementById('waitlistForm');
+  const submitBtn = document.getElementById('submitBtn');
+  
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const businessName = document.getElementById('businessName').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const storeUrl = document.getElementById('storeUrl').value.trim();
+    const platform = document.getElementById('platform').value;
+    const revenue = document.getElementById('revenue').value;
 
-       // Validate email format
-       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-         alert('Please enter a valid email address');
-         return;
-       }
+    // Validate form
+    if (!businessName || !email || !storeUrl || !platform || !revenue) {
+      alert('Please fill in all fields');
+      return;
+    }
 
-       // Validate URL format
-       try {
-         new URL(storeUrl);
-       } catch (e) {
-         alert('Please enter a valid store URL (include https://)');
-         return;
-       }
+    // Validate email format
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      alert('Please enter a valid email address');
+      return;
+    }
 
-       // Disable button during submission
-       submitBtn.disabled = true;
-       submitBtn.textContent = 'Submitting...';
+    // Validate URL format
+    try {
+      new URL(storeUrl);
+    } catch (e) {
+      alert('Please enter a valid store URL (include https://)');
+      return;
+    }
 
-       try {
-         const res = await fetch('/api/join-waitlist', {
-           method: 'POST',
-           headers: {
-             'Content-Type': 'application/json',
-           },
-           body: JSON.stringify({businessName, email, storeUrl, platform, revenue })
-         });
+    // Disable button during submission
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Submitting...';
 
-         const data = await res.json();
+    try {
+      const res = await fetch('/api/join-waitlist', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({businessName, email, storeUrl, platform, revenue })
+      });
 
-         if (res.ok) {
-           // Update counter with actual count from Notion
-           currentCount = data.count || currentCount + 1;
-           localStorage.setItem('waitlistCount', currentCount);
-           countUpEl.textContent = currentCount.toLocaleString();
-           
-           // Add animation effect
-           countUpEl.classList.add('count-updated');
-           setTimeout(() => countUpEl.classList.remove('count-updated'), 500);
-           
-           showThankYouStep();
-         } else {
-           alert(`Submission failed: ${data.error || 'Unknown error'}`);
-         }
-       } catch (err) {
-         console.error('Submission error:', err);
-         alert('Network error. Please try again.');
-       } finally {
-         submitBtn.disabled = false;
-         submitBtn.textContent = 'Join the Waitlist — It\'s Free';
-       }
-     });
-   }
+      const data = await res.json();
+
+      if (res.ok) {
+        // Update counter with actual count from Notion
+        updateCounterDisplay(data.count);
+        
+        // Add animation effect
+        const countUpEl = document.getElementById('countup');
+        countUpEl.classList.add('count-updated');
+        setTimeout(() => countUpEl.classList.remove('count-updated'), 500);
+        
+        showThankYouStep();
+      } else {
+        alert(`Submission failed: ${data.error || 'Unknown error'}`);
+      }
+    } catch (err) {
+      console.error('Submission error:', err);
+      alert('Network error. Please try again.');
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Join the Waitlist — It\'s Free';
+    }
+  });
+}
 
    // Add click handlers to all waitlist buttons
    function setupWaitlistButtons() {

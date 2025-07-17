@@ -1,0 +1,21 @@
+{
+  "routes": [
+    {
+      "src": "/api/join-waitlist",
+      "dest": "/api/join-waitlist.js",
+      "methods": ["POST"],
+      "headers": {
+        "Content-Type": "application/json",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "DENY"
+      }
+    },
+    {
+      "src": "/api/.*\\.js",
+      "status": 403,
+      "headers": {
+        "Content-Type": "application/json"
+      }
+    }
+  ]
+}

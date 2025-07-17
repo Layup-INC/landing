@@ -60,7 +60,7 @@
      Create landing pages, campaigns, and store features by simply describing what you want
     </p>
     <div class="search-container">
-     <textarea class="search-input" placeholder="Ask anything ..."></textarea>
+     <textarea class="search-input" placeholder="Ask LayGen ..."></textarea>
      <button class="search-button">
       <img alt="Platform 1" src="assets/icons/icon-arrow.svg"/>
      </button>
@@ -1012,7 +1012,7 @@
    suggestionTags.forEach(tag => {
      tag.addEventListener('click', () => {
        const prompt = tag.textContent.trim();
-       textarea.value = `${prefix}${prompt}`;
+       textarea.value = `${prompt}`;
        stopTyping();
        textarea.focus();
      });
